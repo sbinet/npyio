@@ -29,66 +29,66 @@ type Header struct {
 	}
 }
 
-type Decoder struct {
+type Reader struct {
 	r   io.Reader
 	err error // last error
 
 	Header Header
 }
 
-func NewDecoder(r io.Reader) (*Decoder, error) {
-	dec := &Decoder{r: r}
-	dec.decodeHeader()
-	if dec.err != nil {
-		return nil, dec.err
+func NewReader(r io.Reader) (*Reader, error) {
+	rr := &Reader{r: r}
+	rr.readHeader()
+	if rr.err != nil {
+		return nil, rr.err
 	}
-	return dec, dec.err
+	return rr, rr.err
 }
 
-func (dec *Decoder) decodeHeader() {
-	if dec.err != nil {
+func (r *Reader) readHeader() {
+	if r.err != nil {
 		return
 	}
 	var magic [6]byte
-	dec.read(&magic)
-	if dec.err != nil {
+	r.read(&magic)
+	if r.err != nil {
 		return
 	}
 	if magic != Magic {
-		dec.err = ErrInvalidNumPyFormat
+		r.err = ErrInvalidNumPyFormat
 		return
 	}
 
 	var hdrLen int
 
-	dec.read(&dec.Header.Major)
-	dec.read(&dec.Header.Minor)
-	switch dec.Header.Major {
+	r.read(&r.Header.Major)
+	r.read(&r.Header.Minor)
+	switch r.Header.Major {
 	case 1:
 		var v uint16
-		dec.read(&v)
+		r.read(&v)
 		hdrLen = int(v)
 	case 2:
 		var v uint32
-		dec.read(&v)
+		r.read(&v)
 		hdrLen = int(v)
 	default:
-		dec.err = fmt.Errorf("npyio: invalid major version number (%d)", dec.Header.Major)
+		r.err = fmt.Errorf("npyio: invalid major version number (%d)", r.Header.Major)
 	}
 
-	if dec.err != nil {
+	if r.err != nil {
 		return
 	}
 
 	hdr := make([]byte, hdrLen)
-	dec.read(&hdr)
+	r.read(&hdr)
 	idx := bytes.LastIndexByte(hdr, '\n')
 	hdr = hdr[:idx]
-	dec.decodeDescr(hdr)
+	r.readDescr(hdr)
 }
 
-func (dec *Decoder) decodeDescr(buf []byte) {
-	if dec.err != nil {
+func (r *Reader) readDescr(buf []byte) {
+	if r.err != nil {
 		return
 	}
 
@@ -104,7 +104,7 @@ func (dec *Decoder) decodeDescr(buf []byte) {
 	begShape := bytes.Index(buf, shapeKey)
 	endDescr := bytes.Index(buf, []byte("}"))
 	if begDescr < 0 || begOrder < 0 || begShape < 0 {
-		dec.err = fmt.Errorf("npyio: invalid dictionary format")
+		r.err = fmt.Errorf("npyio: invalid dictionary format")
 		return
 	}
 
@@ -115,19 +115,19 @@ func (dec *Decoder) decodeDescr(buf []byte) {
 	log.Printf("order: %q\n", order)
 	log.Printf("shape: %q\n", string(shape))
 
-	dec.Header.Descr.Type = descr // FIXME(sbinet): better handling
+	r.Header.Descr.Type = descr // FIXME(sbinet): better handling
 	switch order {
 	case "False":
-		dec.Header.Descr.Fortran = false
+		r.Header.Descr.Fortran = false
 	case "True":
-		dec.Header.Descr.Fortran = true
+		r.Header.Descr.Fortran = true
 	default:
-		dec.err = fmt.Errorf("npyio: invalid 'fortran_order' value (%v)", order)
+		r.err = fmt.Errorf("npyio: invalid 'fortran_order' value (%v)", order)
 		return
 	}
 
 	if string(shape) == "()" {
-		dec.Header.Descr.Shape = []int{1}
+		r.Header.Descr.Shape = []int{1}
 		return
 	}
 
@@ -140,17 +140,17 @@ func (dec *Decoder) decodeDescr(buf []byte) {
 		}
 		i, err := strconv.Atoi(tok)
 		if err != nil {
-			dec.err = err
+			r.err = err
 			return
 		}
-		dec.Header.Descr.Shape = append(dec.Header.Descr.Shape, int(i))
+		r.Header.Descr.Shape = append(r.Header.Descr.Shape, int(i))
 	}
 
 }
 
-func (dec *Decoder) read(v interface{}) {
-	if dec.err != nil {
+func (r *Reader) read(v interface{}) {
+	if r.err != nil {
 		return
 	}
-	dec.err = binary.Read(dec.r, ble, v)
+	r.err = binary.Read(r.r, ble, v)
 }

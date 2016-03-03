@@ -52,7 +52,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("npz-header: %#v\n", r.Header)
+	fmt.Printf("npz-header: %v\n", r.Header)
 
 	m, err := r.Read()
 	if err != nil {
@@ -70,7 +70,7 @@ func main() {
 
 ```
 $> npyio-read data.npz
-npz-header: npyio.Header{Major:0x1, Minor:0x0, Descr:struct { Type string; Fortran bool; Shape []int }{Type:"<i8", Fortran:false, Shape:[]int{2, 3}}}
+npz-header: Header{Major:1, Minor:0, Descr:{Type:<i8, Fortran:false, Shape:[2 3]}}
 data[0][0]= 0
 data[0][1]= 1
 data[0][2]= 2

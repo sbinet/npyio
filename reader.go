@@ -36,6 +36,16 @@ type Header struct {
 	}
 }
 
+func (h Header) String() string {
+	return fmt.Sprintf("Header{Major:%v, Minor:%v, Descr:{Type:%v, Fortran:%v, Shape:%v}}",
+		int(h.Major),
+		int(h.Minor),
+		h.Descr.Type,
+		h.Descr.Fortran,
+		h.Descr.Shape,
+	)
+}
+
 // Reader reads data from a NumPy data file.
 type Reader struct {
 	r   io.Reader

@@ -21,7 +21,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("npz-header: %#v\n", r.Header)
+	fmt.Printf("npz-header: %v\n", r.Header)
 
 	m, err := r.Read()
 	if err != nil {

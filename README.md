@@ -65,7 +65,8 @@ func main() {
 			fmt.Printf("data[%d][%d]= %v\n", i, j, m.At(i, j))
 		}
 	}
-}```
+}
+```
 
 ```
 $> npyio-read data.npz

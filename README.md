@@ -16,14 +16,14 @@ Is available on [godoc](https://godoc.org/github.com/sbinet/npyio)
 
 ## Example
 
-### Reading a .npz file
+### Reading a .npy file
 
-Consider a `.npz` file created with the following `python` code:
+Consider a `.npy` file created with the following `python` code:
 
 ```python
 >>> import numpy as np
 >>> arr = np.arange(6).reshape(2,3)
->>> f = open("data.npz", "w")
+>>> f = open("data.npy", "w")
 >>> np.save(f, arr)
 >>> f.close()
 ```
@@ -42,7 +42,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("data.npz")
+	f, err := os.Open("data.npy")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -52,7 +52,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("npz-header: %v\n", r.Header)
+	fmt.Printf("npy-header: %v\n", r.Header)
 
 	m, err := r.Read()
 	if err != nil {
@@ -69,8 +69,8 @@ func main() {
 ```
 
 ```
-$> npyio-read data.npz
-npz-header: Header{Major:1, Minor:0, Descr:{Type:<i8, Fortran:false, Shape:[2 3]}}
+$> npyio-read data.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<i8, Fortran:false, Shape:[2 3]}}
 data[0][0]= 0
 data[0][1]= 1
 data[0][2]= 2

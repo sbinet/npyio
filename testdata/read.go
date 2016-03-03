@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	f, err := os.Open("data.npz")
+	f, err := os.Open("data.npy")
 	if err != nil {
 		log.Fatal(err)
 	}

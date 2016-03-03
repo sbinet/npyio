@@ -216,7 +216,7 @@ func (r *Reader) Read() (mat64.Matrix, error) {
 func (r *Reader) setter(m *mat64.Dense) (func(i, j int), error) {
 	var set func(i, j int)
 	switch r.Header.Descr.Type {
-	case "<u1":
+	case "<u1", "|u1", ">u1", "u1":
 		var v uint8
 		set = func(i, j int) {
 			r.read(&v)
@@ -240,7 +240,7 @@ func (r *Reader) setter(m *mat64.Dense) (func(i, j int), error) {
 			r.read(&v)
 			m.Set(i, j, float64(v))
 		}
-	case "<i1":
+	case "<i1", "|i1", ">i1", "i1":
 		var v int8
 		set = func(i, j int) {
 			r.read(&v)

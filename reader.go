@@ -52,6 +52,24 @@ func (h Header) String() string {
 	)
 }
 
+// Read reads the data from the r NumPy data file io.Reader, into the
+// provided pointed at value ptr.
+//
+// If a *mat64.Dense matrix is passed to Read, the numpy-array data is loaded
+// into the Dense matrix, honouring Fortran/C-order and dimensions/shape
+// parameters.
+//
+// Only numpy-arrays with up to 2 dimensions are supported.
+// Only numpy-arrays with elements convertible to float64 are supported.
+func Read(r io.Reader, ptr interface{}) error {
+	rr, err := NewReader(r)
+	if err != nil {
+		return err
+	}
+
+	return rr.Read(ptr)
+}
+
 // Reader reads data from a NumPy data file.
 type Reader struct {
 	r   io.Reader
@@ -173,11 +191,7 @@ func (r *Reader) readDescr(buf []byte) {
 // Read reads the numpy-array data from the underlying NumPy file and
 // converts the array elements to the given pointed at value.
 //
-// If a *mat64.Dense matrix is passed to Read, the numpy-array data is loaded
-// into the Dense matrix, honouring Fortran/C-order.
-//
-// Only numpy-arrays with up to 2 dimensions are supported.
-// Only numpy-arrays with elements convertible to float64 are supported.
+// See npyio.Read() for documentation.
 func (r *Reader) Read(ptr interface{}) error {
 	rv := reflect.ValueOf(ptr)
 	if !rv.IsValid() || rv.Kind() != reflect.Ptr {

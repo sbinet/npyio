@@ -73,3 +73,34 @@ data = ⎡0  1  2⎤
        ⎣3  4  5⎦
 ```
 
+### Reading a .npy file with npyio.Read
+
+Alternatively, one can use the convenience function `npyio.Read`:
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/gonum/matrix/mat64"
+	"github.com/sbinet/npyio"
+)
+
+func main() {
+	f, err := os.Open(os.Args[1])
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	var m mat64.Dense
+	err = npyio.Read(f, &m)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
+}```

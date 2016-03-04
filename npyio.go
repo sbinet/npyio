@@ -4,9 +4,8 @@
 // Example:
 //
 //  f, err := os.Open("data.npy")
-//  r, err := npyio.NewReader(f)
 //  var m mat64.Dense
-//  err = r.Read(&m)
+//  err = npyio.Read(f, &m)
 //	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
 //
 // npyio can also read data directly into slices, arrays or scalars, provided
@@ -14,8 +13,8 @@
 //
 // Example:
 //  var data []float64
-//  err = r.Read(&data)
+//  err = npyio.Read(f, &data)
 //
 //  var data uint64
-//  err = r.Read(&data)
+//  err = npyio.Read(f, &data)
 package npyio

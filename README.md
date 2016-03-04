@@ -103,4 +103,38 @@ func main() {
 	}
 
 	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
-}```
+}
+```
+
+### Writing a .npy file npyio.Write
+
+```go
+package main
+
+import (
+	"log"
+	"os"
+
+	"github.com/gonum/matrix/mat64"
+	"github.com/sbinet/npyio"
+)
+
+func main() {
+	f, err := os.Create("data.npy")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	m := mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
+	err = npyio.Write(w, m)
+	if err != nil {
+		log.Fatalf("error writing to file: %v\n", err)
+	}
+
+	err = f.Close()
+	if err != nil {
+		log.Fatalf("error closing file: %v\n", err)
+	}
+}
+```

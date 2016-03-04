@@ -38,6 +38,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/gonum/matrix/mat64"
 	"github.com/sbinet/npyio"
 )
 
@@ -59,23 +60,14 @@ func main() {
 		log.Fatal(err)
 	}
 
-	nrows, ncols := m.Dims()
-	for i := 0; i < nrows; i++ {
-		for j := 0; j < ncols; j++ {
-			fmt.Printf("data[%d][%d]= %v\n", i, j, m.At(i, j))
-		}
-	}
+	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
 }
 ```
 
 ```
 $> npyio-read data.npy
 npy-header: Header{Major:1, Minor:0, Descr:{Type:<i8, Fortran:false, Shape:[2 3]}}
-data[0][0]= 0
-data[0][1]= 1
-data[0][2]= 2
-data[1][0]= 3
-data[1][1]= 4
-data[1][2]= 5
+data = ⎡0  1  2⎤
+       ⎣3  4  5⎦
 ```
 

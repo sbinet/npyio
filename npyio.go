@@ -3,7 +3,7 @@
 //
 // Example:
 //
-//  f, err := os.Open("data.npz")
+//  f, err := os.Open("data.npy")
 //  r, err := npyio.NewReader(f)
 //  var m mat64.Dense
 //  err = r.Read(&m)

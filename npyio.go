@@ -5,11 +5,17 @@
 //
 //  f, err := os.Open("data.npz")
 //  r, err := npyio.NewReader(f)
-//  data, err := r.Read()
-//  nrows, ncols := data.Dims()
-//  for i := 0; i < nrows; i++ {
-//    for j := 0; j < ncols; j++ {
-//      fmt.Printf("data[%d][%d] = %v\n", i, j, m.At(i,j))
-//    }
-//  }
+//  var m mat64.Dense
+//  err = r.Read(&m)
+//	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
+//
+// npyio can also read data directly into slices, arrays or scalars, provided
+// there is a valid type conversion [numpy-data-type]->[go-type].
+//
+// Example:
+//  var data []float64
+//  err = r.Read(&data)
+//
+//  var data uint64
+//  err = r.Read(&data)
 package npyio

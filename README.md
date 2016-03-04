@@ -43,10 +43,11 @@ import (
 )
 
 func main() {
-	f, err := os.Open("data.npy")
+	f, err := os.Open(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer f.Close()
 
 	r, err := npyio.NewReader(f)
 	if err != nil {
@@ -65,7 +66,7 @@ func main() {
 ```
 
 ```
-$> npyio-read data.npy
+$> npyio-ls data.npy
 npy-header: Header{Major:1, Minor:0, Descr:{Type:<i8, Fortran:false, Shape:[2 3]}}
 data = ⎡0  1  2⎤
        ⎣3  4  5⎦

@@ -112,3 +112,25 @@ func TestReaderSlice(t *testing.T) {
 		}
 	}
 }
+
+func TestReaderNDimSlice(t *testing.T) {
+	want := make([]float64, 2*3*4)
+	for i := range want {
+		want[i] = float64(i)
+	}
+
+	f, err := os.Open("testdata/data_float64_2x3x4_corder.npy")
+	if err != nil {
+		t.Errorf("error: %v\n", err)
+	}
+
+	var data []float64
+	err = Read(f, &data)
+	if err != nil {
+		t.Errorf("error reading data: %v\n", err)
+	}
+
+	if !reflect.DeepEqual(data, want) {
+		t.Errorf("error.\n got=%v\nwant=%v\n", data, want)
+	}
+}

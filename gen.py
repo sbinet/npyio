@@ -32,4 +32,8 @@ for dt in [
             np.save(f, getattr(np, dt)(42))
             pass
 
-    
+with open("testdata/data_float64_2x3x4_corder.npy", "w") as f:
+    print(">>> %s" % f.name)
+    arr = np.arange(2*3*4, dtype="float64").reshape(2,3,4, order="c")
+    np.save(f, arr)
+    pass

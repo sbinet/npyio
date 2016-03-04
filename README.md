@@ -14,6 +14,34 @@ $> go get github.com/sbinet/npyio
 
 Is available on [godoc](https://godoc.org/github.com/sbinet/npyio)
 
+## npyio-ls
+
+`npyio-ls` is a command using `github.com/sbinet/npyio` (located under
+`github.com/sbinet/npyio/cmd/npyio-ls`) to display the content of a (list of)
+`NumPy` data file(s).
+
+```
+$> npyio-ls testdata/data_float64_2x3_?order.npy 
+================================================================================
+file: testdata/data_float64_2x3_corder.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
+data = ⎡0  1  2⎤
+       ⎣3  4  5⎦
+
+================================================================================
+file: testdata/data_float64_2x3_forder.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:true, Shape:[2 3]}}
+data = ⎡0  2  4⎤
+       ⎣1  3  5⎦
+
+
+$> npyio-ls testdata/data_float64_2x3x4_corder.npy 
+================================================================================
+file: testdata/data_float64_2x3x4_corder.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3 4]}}
+data = [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
+```
+
 ## Example
 
 ### Reading a .npy file

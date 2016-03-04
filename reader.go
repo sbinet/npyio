@@ -163,7 +163,7 @@ func (r *Reader) Read(ptr interface{}) error {
 	}
 
 	nelems := numElems(r.Header.Descr.Shape)
-	dt := typeFromDType(r.Header.Descr.Type)
+	dt := TypeFrom(r.Header.Descr.Type)
 	if dt == nil {
 		return fmt.Errorf("npyio: no reflect.Type for dtype=%v", r.Header.Descr.Type)
 	}
@@ -296,7 +296,8 @@ func numElems(shape []int) int {
 	return n
 }
 
-func typeFromDType(dtype string) reflect.Type {
+// TypeFrom returns the reflect.Type corresponding to the numpy-dtype string, if any.
+func TypeFrom(dtype string) reflect.Type {
 	switch dtype {
 	case "b1", "<b1", "|b1":
 		return reflect.TypeOf(false)

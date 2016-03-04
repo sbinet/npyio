@@ -127,7 +127,7 @@ func main() {
 	defer f.Close()
 
 	m := mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
-	err = npyio.Write(w, m)
+	err = npyio.Write(f, m)
 	if err != nil {
 		log.Fatalf("error writing to file: %v\n", err)
 	}

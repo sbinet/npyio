@@ -1,12 +1,16 @@
 // Package npyio provides read/write access to files following the NumPy data file format:
 //  http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html
 //
+// Supported types
+//
 // npyio supports r/w of scalars, arrays, slices and mat64.Dense.
 // Supported scalars are:
 //  - bool,
 //  - (u)int{,8,16,32,64},
 //  - float{32,64},
 //  - complex{64,128}
+//
+// Reading
 //
 // Reading from a NumPy data file can be performed like so:
 //
@@ -25,6 +29,7 @@
 //  var data uint64
 //  err = npyio.Read(f, &data)
 //
+// Writing
 //
 // Writing into a NumPy data file can be done like so:
 //

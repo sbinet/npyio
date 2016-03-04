@@ -37,3 +37,9 @@ with open("testdata/data_float64_2x3x4_corder.npy", "w") as f:
     arr = np.arange(2*3*4, dtype="float64").reshape(2,3,4, order="c")
     np.save(f, arr)
     pass
+
+with open("testdata/nans_inf.npy", "w") as f:
+    print(">>> %s" % f.name)
+    arr = np.array([np.nan, -np.inf, 0, np.inf], dtype="float64", order="c")
+    np.save(f, arr)
+    pass

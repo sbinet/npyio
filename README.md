@@ -42,6 +42,27 @@ npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3 
 data = [0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23]
 ```
 
+`npyio-ls` automatically detect `.npz` archive files and inspect them too:
+
+```
+$> npyio-ls testdata/data_float64_corder.npz 
+================================================================================
+file: testdata/data_float64_corder.npz
+entry: arr1.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[6 1]}}
+data = ⎡0⎤
+       ⎢1⎥
+       ⎢2⎥
+       ⎢3⎥
+       ⎢4⎥
+       ⎣5⎦
+
+entry: arr0.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
+data = ⎡0  1  2⎤
+       ⎣3  4  5⎦
+```
+
 ## Example
 
 ### Reading a .npy file
@@ -134,7 +155,7 @@ func main() {
 }
 ```
 
-### Writing a .npy file npyio.Write
+### Writing a .npy file with npyio.Write
 
 ```go
 package main

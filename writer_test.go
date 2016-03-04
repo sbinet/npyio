@@ -2,6 +2,7 @@ package npyio
 
 import (
 	"bytes"
+	"math"
 	"reflect"
 	"testing"
 
@@ -86,6 +87,33 @@ func TestWriter(t *testing.T) {
 		rv := reflect.Indirect(got)
 		if !reflect.DeepEqual(rv.Interface(), want.Interface()) {
 			t.Errorf("%v: error.\n got=%v\nwant=%v\n", test.name, rv.Interface(), want.Interface())
+		}
+	}
+}
+
+func TestWriterNaNsInf(t *testing.T) {
+	want := mat64.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
+
+	buf := new(bytes.Buffer)
+	err := Write(buf, want)
+	if err != nil {
+		t.Errorf("error writing data: %v\n", err)
+	}
+
+	var m mat64.Dense
+	err = Read(buf, &m)
+	if err != nil {
+		t.Errorf("error reading data: %v\n", err)
+	}
+
+	for i, v := range []bool{
+		math.IsNaN(m.At(0, 0)),
+		math.IsInf(m.At(1, 0), -1),
+		m.At(2, 0) == 0,
+		math.IsInf(m.At(3, 0), +1),
+	} {
+		if !v {
+			t.Errorf("read test m.At(%d,0) failed\n got=%#v\nwant=%#v\n", i, m.At(i, 0), want.At(i, 0))
 		}
 	}
 }

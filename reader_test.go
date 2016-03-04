@@ -2,6 +2,7 @@ package npyio
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"reflect"
 	"testing"
@@ -123,6 +124,7 @@ func TestReaderNDimSlice(t *testing.T) {
 	if err != nil {
 		t.Errorf("error: %v\n", err)
 	}
+	defer f.Close()
 
 	var data []float64
 	err = Read(f, &data)
@@ -132,5 +134,31 @@ func TestReaderNDimSlice(t *testing.T) {
 
 	if !reflect.DeepEqual(data, want) {
 		t.Errorf("error.\n got=%v\nwant=%v\n", data, want)
+	}
+}
+
+func TestReaderNaNsInf(t *testing.T) {
+	want := mat64.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
+	f, err := os.Open("testdata/nans_inf.npy")
+	if err != nil {
+		t.Errorf("error: %v\n", err)
+	}
+	defer f.Close()
+
+	var m mat64.Dense
+	err = Read(f, &m)
+	if err != nil {
+		t.Errorf("error reading data: %v\n", err)
+	}
+
+	for i, v := range []bool{
+		math.IsNaN(m.At(0, 0)),
+		math.IsInf(m.At(1, 0), -1),
+		m.At(2, 0) == 0,
+		math.IsInf(m.At(3, 0), +1),
+	} {
+		if !v {
+			t.Errorf("read test m.At(%d,0) failed\n got=%#v\nwant=%#v\n", i, m.At(i, 0), want.At(i, 0))
+		}
 	}
 }

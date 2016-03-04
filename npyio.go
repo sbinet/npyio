@@ -6,7 +6,7 @@
 //  f, err := os.Open("data.npy")
 //  var m mat64.Dense
 //  err = npyio.Read(f, &m)
-//	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
+//  fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
 //
 // npyio can also read data directly into slices, arrays or scalars, provided
 // there is a valid type conversion [numpy-data-type]->[go-type].

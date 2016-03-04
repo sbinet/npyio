@@ -308,31 +308,26 @@ func numElems(shape []int) int {
 }
 
 func typeFromDType(dtype string) reflect.Type {
-	dt := dtype
-	switch dt[0] {
-	case '<', '|', '>', '=':
-		dt = dt[1:]
-	}
-	switch dt {
-	case "u1":
+	switch dtype {
+	case "u1", "<u1", "|u1":
 		return reflect.TypeOf(uint8(0))
-	case "u2":
+	case "<u2":
 		return reflect.TypeOf(uint16(0))
-	case "u4":
+	case "<u4":
 		return reflect.TypeOf(uint32(0))
-	case "u8":
+	case "<u8":
 		return reflect.TypeOf(uint64(0))
-	case "i1":
+	case "i1", "|i1", "<i1":
 		return reflect.TypeOf(int8(0))
-	case "i2":
+	case "<i2":
 		return reflect.TypeOf(int16(0))
-	case "i4":
+	case "<i4":
 		return reflect.TypeOf(int32(0))
-	case "i8":
+	case "<i8":
 		return reflect.TypeOf(int64(0))
-	case "f4":
+	case "<f4":
 		return reflect.TypeOf(float32(0))
-	case "f8":
+	case "<f8":
 		return reflect.TypeOf(float64(0))
 	}
 	return nil

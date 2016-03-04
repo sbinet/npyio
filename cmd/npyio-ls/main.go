@@ -38,11 +38,12 @@ func main() {
 		fmt.Printf("file: %v\n", fname)
 		fmt.Printf("npy-header: %v\n", r.Header)
 
-		m, err := r.Read()
+		var m mat64.Dense
+		err = r.Read(&m)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+		fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -13,6 +14,11 @@ import (
 )
 
 var (
+	errNilPtr = errors.New("npyio: nil pointer")
+	errNotPtr = errors.New("npyio: expected a pointer to a value")
+	errDims   = errors.New("npyio: invalid dimensions")
+	errNoConv = errors.New("npyio: no legal type conversion")
+
 	ble = binary.LittleEndian
 
 	// ErrInvalidNumPyFormat is the error returned by NewReader when
@@ -164,123 +170,126 @@ func (r *Reader) readDescr(buf []byte) {
 
 }
 
-// Read reads the array data from the underlying NumPy data file and
-// returns a mat64.Matrix, converting array elements to float64.
+// Read reads the numpy-array data from the underlying NumPy file and
+// converts the array elements to the given pointed at value.
 //
-// Only arrays with up to 2 dimensions are supported.
-// Only arrays with elements convertible to float64 are supported.
-func (r *Reader) Read() (mat64.Matrix, error) {
+// If a *mat64.Dense matrix is passed to Read, the numpy-array data is loaded
+// into the Dense matrix, honouring Fortran/C-order.
+//
+// Only numpy-arrays with up to 2 dimensions are supported.
+// Only numpy-arrays with elements convertible to float64 are supported.
+func (r *Reader) Read(ptr interface{}) error {
+	rv := reflect.ValueOf(ptr)
+	if !rv.IsValid() || rv.Kind() != reflect.Ptr {
+		return errNotPtr
+	}
+
+	if rv.IsNil() {
+		return errNilPtr
+	}
+
+	nelems := numElems(r.Header.Descr.Shape)
+	dt := typeFromDType(r.Header.Descr.Type)
+	if dt == nil {
+		return fmt.Errorf("npyio: no reflect.Type for dtype=%v", r.Header.Descr.Type)
+	}
+
+	switch ptr.(type) {
+	case *mat64.Dense:
+		var data []float64
+		err := r.Read(&data)
+		if err != nil {
+			return err
+		}
+		nrows, ncols, err := dimsFromShape(r.Header.Descr.Shape)
+		if err != nil {
+			return err
+		}
+		var v *mat64.Dense
+		if r.Header.Descr.Fortran {
+			v = mat64.NewDense(nrows, ncols, nil)
+			i := 0
+			for icol := 0; icol < ncols; icol++ {
+				for irow := 0; irow < nrows; irow++ {
+					v.Set(irow, icol, data[i])
+					i++
+				}
+			}
+		} else {
+			v = mat64.NewDense(nrows, ncols, data)
+		}
+		rv.Elem().Set(reflect.ValueOf(v).Elem())
+		return nil
+	}
+
+	rv = rv.Elem()
+	switch rv.Kind() {
+	case reflect.Slice:
+		rv.SetLen(0)
+		elt := rv.Type().Elem()
+		v := reflect.New(dt).Elem()
+		slice := rv
+		for i := 0; i < nelems; i++ {
+			r.read(v.Addr().Interface())
+			slice = reflect.Append(slice, v.Convert(elt))
+		}
+		rv.Set(slice)
+		return nil
+
+	case reflect.Array:
+		if nelems > rv.Type().Len() {
+			return errDims
+		}
+		elt := rv.Type().Elem()
+		v := reflect.New(dt).Elem()
+		for i := 0; i < nelems; i++ {
+			r.read(v.Addr().Interface())
+			rv.Index(i).Set(v.Convert(elt))
+		}
+		return nil
+
+	case reflect.Bool,
+		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+		reflect.Float32, reflect.Float64,
+		reflect.Complex64, reflect.Complex128:
+		v := reflect.New(dt).Elem()
+		if !dt.ConvertibleTo(rv.Type()) {
+			return errNoConv
+		}
+		r.read(v.Addr().Interface())
+		rv.Set(v.Convert(rv.Type()))
+		return nil
+
+	case reflect.String, reflect.Map, reflect.Chan:
+		return fmt.Errorf("npyio: type %v not supported", rv.Addr().Type())
+	}
+
+	return nil
+}
+
+func dimsFromShape(shape []int) (int, int, error) {
 	nrows := 0
 	ncols := 0
 
-	switch len(r.Header.Descr.Shape) {
+	switch len(shape) {
 	default:
-		return nil, fmt.Errorf("npyio: array shape not supported %v", r.Header.Descr.Shape)
+		return -1, -1, fmt.Errorf("npyio: array shape not supported %v", shape)
 
 	case 0:
 		nrows = 1
 		ncols = 1
 
 	case 1:
-		nrows = r.Header.Descr.Shape[0]
+		nrows = shape[0]
 		ncols = 1
 
 	case 2:
-		nrows = r.Header.Descr.Shape[0]
-		ncols = r.Header.Descr.Shape[1]
+		nrows = shape[0]
+		ncols = shape[1]
 	}
 
-	m := mat64.NewDense(nrows, ncols, nil)
-	set, err := r.setter(m)
-	if err != nil {
-		return nil, err
-	}
-
-	if r.Header.Descr.Fortran {
-		for j := 0; j < ncols; j++ {
-			for i := 0; i < nrows; i++ {
-				set(i, j)
-			}
-		}
-	} else {
-		for i := 0; i < nrows; i++ {
-			for j := 0; j < ncols; j++ {
-				set(i, j)
-			}
-		}
-	}
-
-	return m, nil
-}
-
-func (r *Reader) setter(m *mat64.Dense) (func(i, j int), error) {
-	var set func(i, j int)
-	switch r.Header.Descr.Type {
-	case "<u1", "|u1", ">u1", "u1":
-		var v uint8
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<u2":
-		var v uint16
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<u4":
-		var v uint32
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<u8":
-		var v uint64
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<i1", "|i1", ">i1", "i1":
-		var v int8
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<i2":
-		var v int16
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<i4":
-		var v int32
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<i8":
-		var v int64
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-	case "<f4":
-		var v float32
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, float64(v))
-		}
-
-	case "<f8":
-		var v float64
-		set = func(i, j int) {
-			r.read(&v)
-			m.Set(i, j, v)
-		}
-	default:
-		return nil, fmt.Errorf("npyio: array dtype not supported %q", r.Header.Descr.Type)
-	}
-	return set, nil
+	return nrows, ncols, nil
 }
 
 func (r *Reader) read(v interface{}) {
@@ -288,4 +297,43 @@ func (r *Reader) read(v interface{}) {
 		return
 	}
 	r.err = binary.Read(r.r, ble, v)
+}
+
+func numElems(shape []int) int {
+	n := 1
+	for _, v := range shape {
+		n *= v
+	}
+	return n
+}
+
+func typeFromDType(dtype string) reflect.Type {
+	dt := dtype
+	switch dt[0] {
+	case '<', '|', '>', '=':
+		dt = dt[1:]
+	}
+	switch dt {
+	case "u1":
+		return reflect.TypeOf(uint8(0))
+	case "u2":
+		return reflect.TypeOf(uint16(0))
+	case "u4":
+		return reflect.TypeOf(uint32(0))
+	case "u8":
+		return reflect.TypeOf(uint64(0))
+	case "i1":
+		return reflect.TypeOf(int8(0))
+	case "i2":
+		return reflect.TypeOf(int16(0))
+	case "i4":
+		return reflect.TypeOf(int32(0))
+	case "i8":
+		return reflect.TypeOf(int64(0))
+	case "f4":
+		return reflect.TypeOf(float32(0))
+	case "f8":
+		return reflect.TypeOf(float64(0))
+	}
+	return nil
 }

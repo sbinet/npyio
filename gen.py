@@ -43,3 +43,12 @@ with open("testdata/nans_inf.npy", "w") as f:
     arr = np.array([np.nan, -np.inf, 0, np.inf], dtype="float64", order="c")
     np.save(f, arr)
     pass
+
+for order in ["f", "c"]:
+    with open("testdata/data_float64_%sorder.npz" % order, "w") as f:
+        print(">>> %s" % f.name)
+        arr0 = np.arange(6, dtype="float64").reshape(2, 3, order=order)
+        arr1 = np.arange(6, dtype="float64").reshape(6, 1, order=order)
+        np.savez(f, arr0=arr0, arr1=arr1)
+        pass
+    pass

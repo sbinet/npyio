@@ -1,6 +1,7 @@
 package npyio
 
 import (
+	"archive/zip"
 	"fmt"
 	"math"
 	"os"
@@ -159,6 +160,63 @@ func TestReaderNaNsInf(t *testing.T) {
 	} {
 		if !v {
 			t.Errorf("read test m.At(%d,0) failed\n got=%#v\nwant=%#v\n", i, m.At(i, 0), want.At(i, 0))
+		}
+	}
+}
+
+func TestReaderNpz(t *testing.T) {
+	want := map[string]map[bool]*mat64.Dense{
+		"arr0.npy": map[bool]*mat64.Dense{
+			false: mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
+			true:  mat64.NewDense(2, 3, []float64{0, 2, 4, 1, 3, 5}), // col-major
+		},
+		"arr1.npy": map[bool]*mat64.Dense{
+			false: mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+			true:  mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+		},
+	}
+
+	for _, order := range []string{"c", "f"} {
+		fname := fmt.Sprintf("testdata/data_float64_%sorder.npz", order)
+
+		zr, err := zip.OpenReader(fname)
+		if err != nil {
+			t.Errorf("%s: error: %v\n", fname, err)
+			continue
+		}
+		defer zr.Close()
+
+		for _, zip := range zr.File {
+			f, err := zip.Open()
+			if err != nil {
+				t.Errorf("%s: error opening %s entry: %v\n", fname, zip.Name, err)
+				continue
+			}
+			defer f.Close()
+
+			r, err := NewReader(f)
+			if err != nil {
+				t.Errorf("%s: error creating %s reader: %v\n", fname, zip.Name, err)
+				continue
+			}
+
+			var m mat64.Dense
+			err = r.Read(&m)
+			if err != nil {
+				t.Errorf("%s: error reading %s data: %v\n", fname, zip.Name, err)
+				continue
+			}
+
+			corder := r.Header.Descr.Fortran
+			if !mat64.Equal(&m, want[zip.Name][corder]) {
+				t.Errorf("%s: error comparing %s.\n got=%v\nwant=%v\n",
+					fname,
+					zip.Name,
+					&m,
+					want[zip.Name][corder],
+				)
+				continue
+			}
 		}
 	}
 }

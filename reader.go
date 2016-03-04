@@ -3,7 +3,6 @@ package npyio
 import (
 	"bytes"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"io"
 	"reflect"
@@ -12,45 +11,6 @@ import (
 
 	"github.com/gonum/matrix/mat64"
 )
-
-var (
-	errNilPtr = errors.New("npyio: nil pointer")
-	errNotPtr = errors.New("npyio: expected a pointer to a value")
-	errDims   = errors.New("npyio: invalid dimensions")
-	errNoConv = errors.New("npyio: no legal type conversion")
-
-	ble = binary.LittleEndian
-
-	// ErrInvalidNumPyFormat is the error returned by NewReader when
-	// the underlying io.Reader is not a valid or recognized NumPy data
-	// file format.
-	ErrInvalidNumPyFormat = errors.New("npyio: not a valid NumPy file format")
-
-	// Magic header present at the start of a NumPy data file format.
-	// See http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html
-	Magic = [6]byte{'\x93', 'N', 'U', 'M', 'P', 'Y'}
-)
-
-// Header describes the data content of a NumPy data file.
-type Header struct {
-	Major byte // data file major version
-	Minor byte // data file minor version
-	Descr struct {
-		Type    string // data type of array elements ('<i8', '<f4', ...)
-		Fortran bool   // whether the array data is stored in Fortran-order (col-major)
-		Shape   []int  // array shape (e.g. [2,3] a 2-rows, 3-cols array
-	}
-}
-
-func (h Header) String() string {
-	return fmt.Sprintf("Header{Major:%v, Minor:%v, Descr:{Type:%v, Fortran:%v, Shape:%v}}",
-		int(h.Major),
-		int(h.Minor),
-		h.Descr.Type,
-		h.Descr.Fortran,
-		h.Descr.Shape,
-	)
-}
 
 // Read reads the data from the r NumPy data file io.Reader, into the
 // provided pointed at value ptr.
@@ -233,7 +193,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			v = mat64.NewDense(nrows, ncols, data)
 		}
 		rv.Elem().Set(reflect.ValueOf(v).Elem())
-		return nil
+		return r.err
 	}
 
 	rv = rv.Elem()
@@ -244,11 +204,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		v := reflect.New(dt).Elem()
 		slice := rv
 		for i := 0; i < nelems; i++ {
-			r.read(v.Addr().Interface())
+			err := r.Read(v.Addr().Interface())
+			if err != nil {
+				return err
+			}
 			slice = reflect.Append(slice, v.Convert(elt))
 		}
 		rv.Set(slice)
-		return nil
+		return r.err
 
 	case reflect.Array:
 		if nelems > rv.Type().Len() {
@@ -257,14 +220,26 @@ func (r *Reader) Read(ptr interface{}) error {
 		elt := rv.Type().Elem()
 		v := reflect.New(dt).Elem()
 		for i := 0; i < nelems; i++ {
-			r.read(v.Addr().Interface())
+			err := r.Read(v.Addr().Interface())
+			if err != nil {
+				return err
+			}
 			rv.Index(i).Set(v.Convert(elt))
 		}
-		return nil
+		return r.err
 
-	case reflect.Bool,
-		reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-		reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
+	case reflect.Bool:
+		if !dt.ConvertibleTo(rv.Type()) {
+			return errNoConv
+		}
+		var v uint8
+		r.read(&v)
+		rv.SetBool(v == 1)
+		return r.err
+
+	case reflect.Int, reflect.Uint,
+		reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+		reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
 		reflect.Float32, reflect.Float64,
 		reflect.Complex64, reflect.Complex128:
 		v := reflect.New(dt).Elem()
@@ -273,13 +248,13 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		r.read(v.Addr().Interface())
 		rv.Set(v.Convert(rv.Type()))
-		return nil
+		return r.err
 
-	case reflect.String, reflect.Map, reflect.Chan:
+	case reflect.String, reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
 		return fmt.Errorf("npyio: type %v not supported", rv.Addr().Type())
 	}
 
-	return nil
+	panic("unreachable")
 }
 
 func dimsFromShape(shape []int) (int, int, error) {
@@ -323,6 +298,8 @@ func numElems(shape []int) int {
 
 func typeFromDType(dtype string) reflect.Type {
 	switch dtype {
+	case "b1", "<b1", "|b1":
+		return reflect.TypeOf(false)
 	case "u1", "<u1", "|u1":
 		return reflect.TypeOf(uint8(0))
 	case "<u2":
@@ -343,6 +320,10 @@ func typeFromDType(dtype string) reflect.Type {
 		return reflect.TypeOf(float32(0))
 	case "<f8":
 		return reflect.TypeOf(float64(0))
+	case "<c8":
+		return reflect.TypeOf(complex64(0))
+	case "<c16":
+		return reflect.TypeOf(complex128(0))
 	}
 	return nil
 }

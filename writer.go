@@ -170,6 +170,28 @@ func writeData(w io.Writer, rv reflect.Value) error {
 	case []uint8:
 		_, err := w.Write(v)
 		return err
+
+	case []float32:
+		var buf [4]byte
+		for _, v := range v {
+			ble.PutUint32(buf[:], math.Float32bits(v))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case []float64:
+		var buf [8]byte
+		for _, v := range v {
+			ble.PutUint64(buf[:], math.Float64bits(v))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 	}
 
 	switch rt.Kind() {

@@ -9,6 +9,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -119,9 +120,11 @@ func writeData(w io.Writer, rv reflect.Value) error {
 	if rt == rtDense {
 		m := rv.Interface().(mat64.Dense)
 		nrows, ncols := m.Dims()
+		var buf [8]byte
 		for i := 0; i < nrows; i++ {
 			for j := 0; j < ncols; j++ {
-				err := binary.Write(w, ble, m.At(i, j))
+				ble.PutUint64(buf[:], math.Float64bits(m.At(i, j)))
+				_, err := w.Write(buf[:])
 				if err != nil {
 					return err
 				}

@@ -171,3 +171,23 @@ func BenchmarkWriteComplex128Slice(b *testing.B) {
 		_ = Write(w, data)
 	}
 }
+
+func BenchmarkWriteIntArray(b *testing.B) {
+	var data [1000]int
+	w := ioutil.Discard
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		_ = Write(w, &data)
+	}
+}
+
+func BenchmarkWriteFloat64Array(b *testing.B) {
+	var data [1000]float64
+	w := ioutil.Discard
+	b.ResetTimer()
+
+	for n := 0; n < b.N; n++ {
+		_ = Write(w, &data)
+	}
+}

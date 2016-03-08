@@ -159,15 +159,20 @@ func writeData(w io.Writer, rv reflect.Value) error {
 		return binary.Write(w, ble, rv.Complex())
 
 	case reflect.Array, reflect.Slice:
-		n := rv.Len()
-		for i := 0; i < n; i++ {
-			elem := rv.Index(i)
-			err := writeData(w, elem)
-			if err != nil {
-				return err
+		switch rt.Elem().Kind() {
+		case reflect.Bool, reflect.Int, reflect.Uint:
+			n := rv.Len()
+			for i := 0; i < n; i++ {
+				elem := rv.Index(i)
+				err := writeData(w, elem)
+				if err != nil {
+					return err
+				}
 			}
+			return nil
+		default:
+			return binary.Write(w, ble, rv.Interface())
 		}
-		return nil
 	}
 
 	return fmt.Errorf("npyio: type %v not supported", rt)

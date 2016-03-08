@@ -130,35 +130,43 @@ func writeData(w io.Writer, rv reflect.Value) error {
 		return nil
 	}
 
-	switch rt.Kind() {
-	case reflect.Bool:
-		return binary.Write(w, ble, bool2uint(rv.Bool()))
-	case reflect.Uint8:
-		return binary.Write(w, ble, uint8(rv.Uint()))
-	case reflect.Uint16:
-		return binary.Write(w, ble, uint16(rv.Uint()))
-	case reflect.Uint32:
-		return binary.Write(w, ble, uint32(rv.Uint()))
-	case reflect.Uint, reflect.Uint64:
-		return binary.Write(w, ble, rv.Uint())
-	case reflect.Int8:
-		return binary.Write(w, ble, int8(rv.Int()))
-	case reflect.Int16:
-		return binary.Write(w, ble, int16(rv.Int()))
-	case reflect.Int32:
-		return binary.Write(w, ble, int32(rv.Int()))
-	case reflect.Int, reflect.Int64:
-		return binary.Write(w, ble, rv.Int())
-	case reflect.Float32:
-		return binary.Write(w, ble, float32(rv.Float()))
-	case reflect.Float64:
-		return binary.Write(w, ble, rv.Float())
-	case reflect.Complex64:
-		return binary.Write(w, ble, complex64(rv.Complex()))
-	case reflect.Complex128:
-		return binary.Write(w, ble, rv.Complex())
+	v := rv.Interface()
+	switch v := v.(type) {
+	case bool:
+		return binary.Write(w, ble, bool2uint(v))
+	case int:
+		return binary.Write(w, ble, int64(v))
+	case uint:
+		return binary.Write(w, ble, uint64(v))
+	case []bool:
+		for _, vv := range v {
+			err := binary.Write(w, ble, bool2uint(vv))
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	case []int:
+		for _, vv := range v {
+			err := binary.Write(w, ble, int64(vv))
+			if err != nil {
+				return err
+			}
+		}
+		return nil
 
-	case reflect.Array, reflect.Slice:
+	case []uint:
+		for _, vv := range v {
+			err := binary.Write(w, ble, uint64(vv))
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+	}
+
+	switch rt.Kind() {
+	case reflect.Array:
 		switch rt.Elem().Kind() {
 		case reflect.Bool, reflect.Int, reflect.Uint:
 			n := rv.Len()
@@ -171,11 +179,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 			}
 			return nil
 		default:
-			return binary.Write(w, ble, rv.Interface())
+			return binary.Write(w, ble, v)
 		}
+
+	case reflect.Interface, reflect.String, reflect.Chan, reflect.Map, reflect.Struct:
+		return fmt.Errorf("npyio: type %v not supported", rt)
 	}
 
-	return fmt.Errorf("npyio: type %v not supported", rt)
+	return binary.Write(w, ble, v)
 }
 
 func bool2uint(b bool) uint8 {

@@ -163,6 +163,10 @@ func writeData(w io.Writer, rv reflect.Value) error {
 			}
 		}
 		return nil
+
+	case []uint8:
+		_, err := w.Write(v)
+		return err
 	}
 
 	switch rt.Kind() {

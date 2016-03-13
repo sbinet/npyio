@@ -15,7 +15,7 @@ import (
 	"github.com/gonum/matrix/mat64"
 )
 
-func TestReader(t *testing.T) {
+func TestReaderDense(t *testing.T) {
 	want := map[string]map[bool]*mat64.Dense{
 		"2x3": map[bool]*mat64.Dense{
 			false: mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
@@ -36,9 +36,7 @@ func TestReader(t *testing.T) {
 	}
 
 	for _, dt := range []string{
-		"float32", "float64",
-		"int8", "int16", "int32", "int64",
-		"uint8", "uint16", "uint32", "uint64",
+		"float64",
 	} {
 		for _, order := range []string{"f", "c"} {
 			for _, shape := range []string{"2x3", "6x1", "1x1", "scalar"} {
@@ -75,11 +73,67 @@ func TestReader(t *testing.T) {
 }
 
 func TestReaderSlice(t *testing.T) {
-	want := map[string][]float64{
-		"2x3":    []float64{0, 1, 2, 3, 4, 5},
-		"6x1":    []float64{0, 1, 2, 3, 4, 5},
-		"1x1":    []float64{42},
-		"scalar": []float64{42},
+	want := map[string]map[string]interface{}{
+		"float32": {
+			"2x3":    []float32{0, 1, 2, 3, 4, 5},
+			"6x1":    []float32{0, 1, 2, 3, 4, 5},
+			"1x1":    []float32{42},
+			"scalar": []float32{42},
+		},
+		"float64": {
+			"2x3":    []float64{0, 1, 2, 3, 4, 5},
+			"6x1":    []float64{0, 1, 2, 3, 4, 5},
+			"1x1":    []float64{42},
+			"scalar": []float64{42},
+		},
+		"int8": {
+			"2x3":    []int8{0, 1, 2, 3, 4, 5},
+			"6x1":    []int8{0, 1, 2, 3, 4, 5},
+			"1x1":    []int8{42},
+			"scalar": []int8{42},
+		},
+		"int16": {
+			"2x3":    []int16{0, 1, 2, 3, 4, 5},
+			"6x1":    []int16{0, 1, 2, 3, 4, 5},
+			"1x1":    []int16{42},
+			"scalar": []int16{42},
+		},
+		"int32": {
+			"2x3":    []int32{0, 1, 2, 3, 4, 5},
+			"6x1":    []int32{0, 1, 2, 3, 4, 5},
+			"1x1":    []int32{42},
+			"scalar": []int32{42},
+		},
+		"int64": {
+			"2x3":    []int64{0, 1, 2, 3, 4, 5},
+			"6x1":    []int64{0, 1, 2, 3, 4, 5},
+			"1x1":    []int64{42},
+			"scalar": []int64{42},
+		},
+		"uint8": {
+			"2x3":    []uint8{0, 1, 2, 3, 4, 5},
+			"6x1":    []uint8{0, 1, 2, 3, 4, 5},
+			"1x1":    []uint8{42},
+			"scalar": []uint8{42},
+		},
+		"uint16": {
+			"2x3":    []uint16{0, 1, 2, 3, 4, 5},
+			"6x1":    []uint16{0, 1, 2, 3, 4, 5},
+			"1x1":    []uint16{42},
+			"scalar": []uint16{42},
+		},
+		"uint32": {
+			"2x3":    []uint32{0, 1, 2, 3, 4, 5},
+			"6x1":    []uint32{0, 1, 2, 3, 4, 5},
+			"1x1":    []uint32{42},
+			"scalar": []uint32{42},
+		},
+		"uint64": {
+			"2x3":    []uint64{0, 1, 2, 3, 4, 5},
+			"6x1":    []uint64{0, 1, 2, 3, 4, 5},
+			"1x1":    []uint64{42},
+			"scalar": []uint64{42},
+		},
 	}
 
 	for _, dt := range []string{
@@ -102,16 +156,21 @@ func TestReaderSlice(t *testing.T) {
 					t.Errorf("%v: error: %v\n", fname, err)
 				}
 
-				var data []float64
-				err = r.Read(&data)
+				rt := TypeFrom(dt)
+				if rt == nil {
+					t.Errorf("%v: no reflect type for %v\n", fname, dt)
+					continue
+				}
+				data := reflect.New(reflect.SliceOf(rt))
+				err = r.Read(data.Interface())
 				if err != nil {
 					t.Errorf("%v: error: %v\n", fname, err)
 				}
-				if !reflect.DeepEqual(data, want[shape]) {
+				if !reflect.DeepEqual(data.Elem().Interface(), want[dt][shape]) {
 					t.Errorf("%v: error.\n got=%v\nwant=%v\n",
 						fname,
-						data,
-						want[shape],
+						data.Elem().Interface(),
+						want[dt][shape],
 					)
 				}
 			}

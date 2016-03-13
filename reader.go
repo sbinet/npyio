@@ -18,6 +18,8 @@ import (
 
 // Read reads the data from the r NumPy data file io.Reader, into the
 // provided pointed at value ptr.
+// Read returns an error if the on-disk data type and the one provided
+// don't match.
 //
 // If a *mat64.Dense matrix is passed to Read, the numpy-array data is loaded
 // into the Dense matrix, honouring Fortran/C-order and dimensions/shape
@@ -152,8 +154,9 @@ func (r *Reader) readDescr(buf []byte) {
 
 }
 
-// Read reads the numpy-array data from the underlying NumPy file and
-// converts the array elements to the given pointed at value.
+// Read reads the numpy-array data from the underlying NumPy file.
+// Read returns an error if the on-disk data type and the provided one
+// don't match.
 //
 // See npyio.Read() for documentation.
 func (r *Reader) Read(ptr interface{}) error {

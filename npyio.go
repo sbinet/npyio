@@ -24,7 +24,7 @@
 //  fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
 //
 // npyio can also read data directly into slices, arrays or scalars, provided
-// there is a valid type conversion [numpy-data-type]->[go-type].
+// the on-disk data type and the provided one match.
 //
 // Example:
 //  var data []float64
@@ -71,6 +71,10 @@ var (
 	// the underlying io.Reader is not a valid or recognized NumPy data
 	// file format.
 	ErrInvalidNumPyFormat = errors.New("npyio: not a valid NumPy file format")
+
+	// ErrTypeMismatch is the error returned by Reader when the on-disk
+	// data type and the user provided one do NOT match.
+	ErrTypeMismatch = errors.New("npyio: types don't match")
 
 	// Magic header present at the start of a NumPy data file format.
 	// See http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html

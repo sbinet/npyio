@@ -193,25 +193,25 @@ func BenchmarkWriteFloat64Array(b *testing.B) {
 	}
 }
 
-type creader struct {
+type reader struct {
 	buf []byte
 	pos int
 }
 
-func (r *creader) Read(data []byte) (int, error) {
+func (r *reader) Read(data []byte) (int, error) {
 	n := copy(data, r.buf[r.pos:r.pos+len(data)])
 	r.pos += n
 	return n, nil
 }
 
-func (r *creader) reset() {
+func (r *reader) reset() {
 	r.pos = 0
 }
 
 func BenchmarkReadDense(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, mat64.NewDense(100, 10, make([]float64, 1000)))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -224,7 +224,7 @@ func BenchmarkReadDense(b *testing.B) {
 func BenchmarkReadFloat32Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]float32, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -237,7 +237,7 @@ func BenchmarkReadFloat32Slice(b *testing.B) {
 func BenchmarkReadFloat64Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]float64, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -250,7 +250,7 @@ func BenchmarkReadFloat64Slice(b *testing.B) {
 func BenchmarkReadBoolSlice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]bool, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -263,7 +263,7 @@ func BenchmarkReadBoolSlice(b *testing.B) {
 func BenchmarkReadUintSlice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -276,7 +276,7 @@ func BenchmarkReadUintSlice(b *testing.B) {
 func BenchmarkReadUint8Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint8, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -289,7 +289,7 @@ func BenchmarkReadUint8Slice(b *testing.B) {
 func BenchmarkReadUint16Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint16, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -302,7 +302,7 @@ func BenchmarkReadUint16Slice(b *testing.B) {
 func BenchmarkReadUint32Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint32, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -315,7 +315,7 @@ func BenchmarkReadUint32Slice(b *testing.B) {
 func BenchmarkReadUint64Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint64, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -328,7 +328,7 @@ func BenchmarkReadUint64Slice(b *testing.B) {
 func BenchmarkReadIntSlice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -341,7 +341,7 @@ func BenchmarkReadIntSlice(b *testing.B) {
 func BenchmarkReadInt8Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int8, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -354,7 +354,7 @@ func BenchmarkReadInt8Slice(b *testing.B) {
 func BenchmarkReadInt16Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int16, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -367,7 +367,7 @@ func BenchmarkReadInt16Slice(b *testing.B) {
 func BenchmarkReadInt32Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int32, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -380,7 +380,7 @@ func BenchmarkReadInt32Slice(b *testing.B) {
 func BenchmarkReadInt64Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int64, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -393,7 +393,7 @@ func BenchmarkReadInt64Slice(b *testing.B) {
 func BenchmarkReadComplex64Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]complex64, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -406,7 +406,7 @@ func BenchmarkReadComplex64Slice(b *testing.B) {
 func BenchmarkReadComplex128Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]complex128, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -419,7 +419,7 @@ func BenchmarkReadComplex128Slice(b *testing.B) {
 func BenchmarkReadIntArray(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]int, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -432,7 +432,7 @@ func BenchmarkReadIntArray(b *testing.B) {
 func BenchmarkReadFloat64Array(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]float64, 1000))
-	r := &creader{buf: buf.Bytes()}
+	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {

@@ -10,7 +10,7 @@
 // npyio supports r/w of scalars, arrays, slices and mat64.Dense.
 // Supported scalars are:
 //  - bool,
-//  - (u)int{,8,16,32,64},
+//  - (u)int{8,16,32,64},
 //  - float{32,64},
 //  - complex{64,128}
 //

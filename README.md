@@ -71,13 +71,13 @@ Consider a `.npy` file created with the following `python` code:
 
 ```python
 >>> import numpy as np
->>> arr = np.arange(6).reshape(2,3)
+>>> arr = np.arange(6, dtype="float64").reshape(2,3)
 >>> f = open("data.npy", "w")
 >>> np.save(f, arr)
 >>> f.close()
 ```
 
-The (int64) data array can be loaded into a (float64) `mat64.Matrix` by the following code:
+The (float64) data array can be loaded into a (float64) `mat64.Matrix` by the following code:
 
 ```go
 package main

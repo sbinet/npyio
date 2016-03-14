@@ -77,6 +77,11 @@ var (
 	// data type and the user provided one do NOT match.
 	ErrTypeMismatch = errors.New("npyio: types don't match")
 
+	// ErrInvalidType is the error returned by Reader and Writer when
+	// confronted with a type that is not supported or can not be
+	// reliably (de)serialized.
+	ErrInvalidType = errors.New("npyio: invalid or unsupported type")
+
 	// Magic header present at the start of a NumPy data file format.
 	// See http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html
 	Magic = [6]byte{'\x93', 'N', 'U', 'M', 'P', 'Y'}
@@ -112,6 +117,7 @@ func (h Header) String() string {
 }
 
 var (
+	boolType       = reflect.TypeOf(true)
 	uint8Type      = reflect.TypeOf((*uint8)(nil)).Elem()
 	uint16Type     = reflect.TypeOf((*uint16)(nil)).Elem()
 	uint32Type     = reflect.TypeOf((*uint32)(nil)).Elem()
@@ -124,4 +130,7 @@ var (
 	float64Type    = reflect.TypeOf((*float64)(nil)).Elem()
 	complex64Type  = reflect.TypeOf((*complex64)(nil)).Elem()
 	complex128Type = reflect.TypeOf((*complex128)(nil)).Elem()
+
+	trueUint8  = []byte{1}
+	falseUint8 = []byte{0}
 )

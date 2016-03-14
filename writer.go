@@ -136,39 +136,166 @@ func writeData(w io.Writer, rv reflect.Value) error {
 	v := rv.Interface()
 	switch v := v.(type) {
 	case bool:
-		return binary.Write(w, ble, bool2uint(v))
-	case int:
-		return binary.Write(w, ble, int64(v))
-	case uint:
-		return binary.Write(w, ble, uint64(v))
+		switch v {
+		case true:
+			_, err := w.Write(trueUint8)
+			return err
+		case false:
+			_, err := w.Write(falseUint8)
+			return err
+		}
+
 	case []bool:
 		for _, vv := range v {
-			err := binary.Write(w, ble, bool2uint(vv))
-			if err != nil {
-				return err
-			}
-		}
-		return nil
-	case []int:
-		for _, vv := range v {
-			err := binary.Write(w, ble, int64(vv))
-			if err != nil {
-				return err
+			switch vv {
+			case true:
+				_, err := w.Write(trueUint8)
+				if err != nil {
+					return err
+				}
+			case false:
+				_, err := w.Write(falseUint8)
+				if err != nil {
+					return err
+				}
 			}
 		}
 		return nil
 
-	case []uint:
-		for _, vv := range v {
-			err := binary.Write(w, ble, uint64(vv))
-			if err != nil {
-				return err
-			}
-		}
-		return nil
+	case uint, []uint, int, []int:
+		return ErrInvalidType
+
+	case uint8:
+		buf := [1]byte{v}
+		_, err := w.Write(buf[:])
+		return err
 
 	case []uint8:
 		_, err := w.Write(v)
+		return err
+
+	case uint16:
+		var buf [2]byte
+		ble.PutUint16(buf[:], v)
+		_, err := w.Write(buf[:])
+		return err
+
+	case []uint16:
+		var buf [2]byte
+		for _, vv := range v {
+			ble.PutUint16(buf[:], vv)
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case uint32:
+		var buf [4]byte
+		ble.PutUint32(buf[:], v)
+		_, err := w.Write(buf[:])
+		return err
+
+	case []uint32:
+		var buf [4]byte
+		for _, vv := range v {
+			ble.PutUint32(buf[:], vv)
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case uint64:
+		var buf [8]byte
+		ble.PutUint64(buf[:], v)
+		_, err := w.Write(buf[:])
+		return err
+
+	case []uint64:
+		var buf [8]byte
+		for _, vv := range v {
+			ble.PutUint64(buf[:], vv)
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case int8:
+		buf := [1]byte{byte(v)}
+		_, err := w.Write(buf[:])
+		return err
+
+	case []int8:
+		var buf [1]byte
+		for _, vv := range v {
+			buf[0] = uint8(vv)
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case int16:
+		var buf [2]byte
+		ble.PutUint16(buf[:], uint16(v))
+		_, err := w.Write(buf[:])
+		return err
+
+	case []int16:
+		var buf [2]byte
+		for _, vv := range v {
+			ble.PutUint16(buf[:], uint16(vv))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case int32:
+		var buf [4]byte
+		ble.PutUint32(buf[:], uint32(v))
+		_, err := w.Write(buf[:])
+		return err
+
+	case []int32:
+		var buf [4]byte
+		for _, vv := range v {
+			ble.PutUint32(buf[:], uint32(vv))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case int64:
+		var buf [8]byte
+		ble.PutUint64(buf[:], uint64(v))
+		_, err := w.Write(buf[:])
+		return err
+
+	case []int64:
+		var buf [8]byte
+		for _, vv := range v {
+			ble.PutUint64(buf[:], uint64(vv))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case float32:
+		var buf [4]byte
+		ble.PutUint32(buf[:], math.Float32bits(v))
+		_, err := w.Write(buf[:])
 		return err
 
 	case []float32:
@@ -182,10 +309,54 @@ func writeData(w io.Writer, rv reflect.Value) error {
 		}
 		return nil
 
+	case float64:
+		var buf [8]byte
+		ble.PutUint64(buf[:], math.Float64bits(v))
+		_, err := w.Write(buf[:])
+		return err
+
 	case []float64:
 		var buf [8]byte
 		for _, v := range v {
 			ble.PutUint64(buf[:], math.Float64bits(v))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case complex64:
+		var buf [8]byte
+		ble.PutUint32(buf[0:4], math.Float32bits(real(v)))
+		ble.PutUint32(buf[4:8], math.Float32bits(imag(v)))
+		_, err := w.Write(buf[:])
+		return err
+
+	case []complex64:
+		var buf [8]byte
+		for _, v := range v {
+			ble.PutUint32(buf[0:4], math.Float32bits(real(v)))
+			ble.PutUint32(buf[4:8], math.Float32bits(imag(v)))
+			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case complex128:
+		var buf [16]byte
+		ble.PutUint64(buf[0:8], math.Float64bits(real(v)))
+		ble.PutUint64(buf[8:16], math.Float64bits(imag(v)))
+		_, err := w.Write(buf[:])
+		return err
+
+	case []complex128:
+		var buf [16]byte
+		for _, v := range v {
+			ble.PutUint64(buf[0:8], math.Float64bits(real(v)))
+			ble.PutUint64(buf[8:16], math.Float64bits(imag(v)))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -216,13 +387,6 @@ func writeData(w io.Writer, rv reflect.Value) error {
 	}
 
 	return binary.Write(w, ble, v)
-}
-
-func bool2uint(b bool) uint8 {
-	if b {
-		return 1
-	}
-	return 0
 }
 
 func dtypeFrom(rt reflect.Type) (string, error) {

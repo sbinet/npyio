@@ -93,16 +93,6 @@ func BenchmarkWriteUint64Slice(b *testing.B) {
 	}
 }
 
-func BenchmarkWriteUintSlice(b *testing.B) {
-	data := make([]uint, 1000)
-	w := ioutil.Discard
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		_ = Write(w, data)
-	}
-}
-
 func BenchmarkWriteInt8Slice(b *testing.B) {
 	data := make([]int8, 1000)
 	w := ioutil.Discard
@@ -143,16 +133,6 @@ func BenchmarkWriteInt64Slice(b *testing.B) {
 	}
 }
 
-func BenchmarkWriteIntSlice(b *testing.B) {
-	data := make([]int, 1000)
-	w := ioutil.Discard
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		_ = Write(w, data)
-	}
-}
-
 func BenchmarkWriteComplex64Slice(b *testing.B) {
 	data := make([]complex64, 1000)
 	w := ioutil.Discard
@@ -173,8 +153,8 @@ func BenchmarkWriteComplex128Slice(b *testing.B) {
 	}
 }
 
-func BenchmarkWriteIntArray(b *testing.B) {
-	var data [1000]int
+func BenchmarkWriteInt64Array(b *testing.B) {
+	var data [1000]int64
 	w := ioutil.Discard
 	b.ResetTimer()
 
@@ -260,19 +240,6 @@ func BenchmarkReadBoolSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkReadUintSlice(b *testing.B) {
-	buf := new(bytes.Buffer)
-	_ = Write(buf, make([]uint, 1000))
-	r := &reader{buf: buf.Bytes()}
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		var data []uint
-		_ = Read(r, &data)
-		r.reset()
-	}
-}
-
 func BenchmarkReadUint8Slice(b *testing.B) {
 	buf := new(bytes.Buffer)
 	_ = Write(buf, make([]uint8, 1000))
@@ -320,19 +287,6 @@ func BenchmarkReadUint64Slice(b *testing.B) {
 
 	for n := 0; n < b.N; n++ {
 		var data []uint64
-		_ = Read(r, &data)
-		r.reset()
-	}
-}
-
-func BenchmarkReadIntSlice(b *testing.B) {
-	buf := new(bytes.Buffer)
-	_ = Write(buf, make([]int, 1000))
-	r := &reader{buf: buf.Bytes()}
-	b.ResetTimer()
-
-	for n := 0; n < b.N; n++ {
-		var data []int
 		_ = Read(r, &data)
 		r.reset()
 	}
@@ -416,9 +370,9 @@ func BenchmarkReadComplex128Slice(b *testing.B) {
 	}
 }
 
-func BenchmarkReadIntArray(b *testing.B) {
+func BenchmarkReadInt64Array(b *testing.B) {
 	buf := new(bytes.Buffer)
-	_ = Write(buf, make([]int, 1000))
+	_ = Write(buf, make([]int64, 1000))
 	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 

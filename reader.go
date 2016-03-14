@@ -177,6 +177,9 @@ func (r *Reader) Read(ptr interface{}) error {
 	}
 
 	switch vptr := ptr.(type) {
+	case *int, *uint, *[]int, *[]uint:
+		return ErrInvalidType
+
 	case *mat64.Dense:
 		var data []float64
 		err := r.Read(&data)
@@ -201,6 +204,43 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		return r.err
 
+	case *bool:
+		if dt != boolType {
+			return ErrTypeMismatch
+		}
+		var buf [1]byte
+		_, err := r.r.Read(buf[:])
+		if err != nil {
+			return err
+		}
+		switch buf[0] {
+		case 0:
+			*vptr = false
+		case 1:
+			*vptr = true
+		}
+		return nil
+
+	case *[]bool:
+		if dt != boolType {
+			return ErrTypeMismatch
+		}
+		*vptr = make([]bool, nelems)
+		var buf [1]byte
+		for i := 0; i < nelems; i++ {
+			_, err := r.r.Read(buf[:])
+			if err != nil {
+				return err
+			}
+			switch buf[0] {
+			case 0:
+				(*vptr)[i] = false
+			case 1:
+				(*vptr)[i] = true
+			}
+		}
+		return nil
+
 	case *int8:
 		if dt != int8Type {
 			return ErrTypeMismatch
@@ -217,13 +257,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != int8Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]int8, nelems)
 		var buf [1]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, int8(buf[0]))
+			(*vptr)[i] = int8(buf[0])
 		}
 		return nil
 
@@ -243,13 +284,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != int16Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]int16, nelems)
+		var buf [2]byte
 		for i := 0; i < nelems; i++ {
-			var buf [2]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, int16(ble.Uint16(buf[:])))
+			(*vptr)[i] = int16(ble.Uint16(buf[:]))
 		}
 		return nil
 
@@ -269,13 +311,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != int32Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]int32, nelems)
+		var buf [4]byte
 		for i := 0; i < nelems; i++ {
-			var buf [4]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, int32(ble.Uint32(buf[:])))
+			(*vptr)[i] = int32(ble.Uint32(buf[:]))
 		}
 		return nil
 
@@ -295,13 +338,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != int64Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]int64, nelems)
+		var buf [8]byte
 		for i := 0; i < nelems; i++ {
-			var buf [8]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, int64(ble.Uint64(buf[:])))
+			(*vptr)[i] = int64(ble.Uint64(buf[:]))
 		}
 		return nil
 
@@ -322,12 +366,13 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
+		*vptr = make([]uint8, nelems)
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, buf[0])
+			(*vptr)[i] = buf[0]
 		}
 		return nil
 
@@ -347,13 +392,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != uint16Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]uint16, nelems)
+		var buf [2]byte
 		for i := 0; i < nelems; i++ {
-			var buf [2]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, ble.Uint16(buf[:]))
+			(*vptr)[i] = ble.Uint16(buf[:])
 		}
 		return nil
 
@@ -373,13 +419,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != uint32Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]uint32, nelems)
+		var buf [4]byte
 		for i := 0; i < nelems; i++ {
-			var buf [4]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, ble.Uint32(buf[:]))
+			(*vptr)[i] = ble.Uint32(buf[:])
 		}
 		return nil
 
@@ -399,13 +446,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != uint64Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]uint64, nelems)
+		var buf [8]byte
 		for i := 0; i < nelems; i++ {
-			var buf [8]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			*vptr = append(*vptr, ble.Uint64(buf[:]))
+			(*vptr)[i] = ble.Uint64(buf[:])
 		}
 		return nil
 
@@ -425,14 +473,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != float32Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]float32, nelems)
+		var buf [4]byte
 		for i := 0; i < nelems; i++ {
-			var buf [4]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			v := math.Float32frombits(ble.Uint32(buf[:]))
-			*vptr = append(*vptr, v)
+			(*vptr)[i] = math.Float32frombits(ble.Uint32(buf[:]))
 		}
 		return nil
 
@@ -452,14 +500,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != float64Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]float64, nelems)
+		var buf [8]byte
 		for i := 0; i < nelems; i++ {
-			var buf [8]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			v := math.Float64frombits(ble.Uint64(buf[:]))
-			*vptr = append(*vptr, v)
+			(*vptr)[i] = math.Float64frombits(ble.Uint64(buf[:]))
 		}
 		return nil
 
@@ -467,17 +515,13 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != complex64Type {
 			return ErrTypeMismatch
 		}
-		var buf [4]byte
+		var buf [8]byte
 		_, err := r.r.Read(buf[:])
 		if err != nil {
 			return err
 		}
-		rcplx := math.Float32frombits(ble.Uint32(buf[:]))
-		_, err = r.r.Read(buf[:])
-		if err != nil {
-			return err
-		}
-		icplx := math.Float32frombits(ble.Uint32(buf[:]))
+		rcplx := math.Float32frombits(ble.Uint32(buf[0:4]))
+		icplx := math.Float32frombits(ble.Uint32(buf[4:8]))
 		*vptr = complex(rcplx, icplx)
 		return nil
 
@@ -485,19 +529,16 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != complex64Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]complex64, nelems)
+		var buf [8]byte
 		for i := 0; i < nelems; i++ {
-			var buf [4]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			rcplx := math.Float32frombits(ble.Uint32(buf[:]))
-			_, err = r.r.Read(buf[:])
-			if err != nil {
-				return err
-			}
-			icplx := math.Float32frombits(ble.Uint32(buf[:]))
-			*vptr = append(*vptr, complex(rcplx, icplx))
+			rcplx := math.Float32frombits(ble.Uint32(buf[0:4]))
+			icplx := math.Float32frombits(ble.Uint32(buf[4:8]))
+			(*vptr)[i] = complex(rcplx, icplx)
 		}
 		return nil
 
@@ -505,17 +546,13 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != complex128Type {
 			return ErrTypeMismatch
 		}
-		var buf [8]byte
+		var buf [16]byte
 		_, err := r.r.Read(buf[:])
 		if err != nil {
 			return err
 		}
-		rcplx := math.Float64frombits(ble.Uint64(buf[:]))
-		_, err = r.r.Read(buf[:])
-		if err != nil {
-			return err
-		}
-		icplx := math.Float64frombits(ble.Uint64(buf[:]))
+		rcplx := math.Float64frombits(ble.Uint64(buf[0:8]))
+		icplx := math.Float64frombits(ble.Uint64(buf[8:16]))
 		*vptr = complex(rcplx, icplx)
 		return nil
 
@@ -523,25 +560,22 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt != complex128Type {
 			return ErrTypeMismatch
 		}
+		*vptr = make([]complex128, nelems)
+		var buf [16]byte
 		for i := 0; i < nelems; i++ {
-			var buf [8]byte
 			_, err := r.r.Read(buf[:])
 			if err != nil {
 				return err
 			}
-			rcplx := math.Float64frombits(ble.Uint64(buf[:]))
-			_, err = r.r.Read(buf[:])
-			if err != nil {
-				return err
-			}
-			icplx := math.Float64frombits(ble.Uint64(buf[:]))
-			*vptr = append(*vptr, complex(rcplx, icplx))
+			rcplx := math.Float64frombits(ble.Uint64(buf[0:8]))
+			icplx := math.Float64frombits(ble.Uint64(buf[8:16]))
+			(*vptr)[i] = complex(rcplx, icplx)
 		}
 		return nil
 
 	}
 
-	rv = rv.Elem()
+	rv = reflect.Indirect(rv)
 	switch rv.Kind() {
 	case reflect.Slice:
 		rv.SetLen(0)
@@ -562,6 +596,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		if nelems > rv.Type().Len() {
 			return errDims
 		}
+
 		elt := rv.Type().Elem()
 		v := reflect.New(dt).Elem()
 		for i := 0; i < nelems; i++ {

@@ -26,12 +26,10 @@ func TestWriter(t *testing.T) {
 		// scalars
 		{"bool-true", true},
 		{"bool-false", false},
-		{"uint", uint(42)},
 		{"uint8", uint8(42)},
 		{"uint16", uint16(42)},
 		{"uint32", uint32(42)},
 		{"uint64", uint64(42)},
-		{"int", int(42)},
 		{"int8", int8(42)},
 		{"int16", int16(42)},
 		{"int32", int32(42)},
@@ -43,12 +41,10 @@ func TestWriter(t *testing.T) {
 
 		// arrays
 		{"bool-array", [6]bool{true, true, false, false, true, false}},
-		{"uint-array", [6]uint{0, 1, 2, 3, 4, 5}},
 		{"uint8-array", [6]uint8{0, 1, 2, 3, 4, 5}},
 		{"uint16-array", [6]uint16{0, 1, 2, 3, 4, 5}},
 		{"uint32-array", [6]uint32{0, 1, 2, 3, 4, 5}},
 		{"uint64-array", [6]uint64{0, 1, 2, 3, 4, 5}},
-		{"int-array", [6]int{0, 1, 2, 3, 4, 5}},
 		{"int8-array", [6]int8{0, 1, 2, 3, 4, 5}},
 		{"int16-array", [6]int16{0, 1, 2, 3, 4, 5}},
 		{"int32-array", [6]int32{0, 1, 2, 3, 4, 5}},
@@ -60,12 +56,10 @@ func TestWriter(t *testing.T) {
 
 		// slices
 		{"bool-slice", []bool{true, true, false, false, true, false}},
-		{"uint-slice", []uint{0, 1, 2, 3, 4, 5}},
 		{"uint8-slice", []uint8{0, 1, 2, 3, 4, 5}},
 		{"uint16-slice", []uint16{0, 1, 2, 3, 4, 5}},
 		{"uint32-slice", []uint32{0, 1, 2, 3, 4, 5}},
 		{"uint64-slice", []uint64{0, 1, 2, 3, 4, 5}},
-		{"int-slice", []int{0, 1, 2, 3, 4, 5}},
 		{"int8-slice", []int8{0, 1, 2, 3, 4, 5}},
 		{"int16-slice", []int16{0, 1, 2, 3, 4, 5}},
 		{"int32-slice", []int32{0, 1, 2, 3, 4, 5}},

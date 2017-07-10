@@ -14,7 +14,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/gonum/matrix/mat64"
 	"github.com/sbinet/npyio"
 )
 
@@ -90,6 +89,12 @@ func main() {
 				}
 				fmt.Printf("entry: %s\n", f.Name)
 				allgood = display(r, fname+"@"+f.Name) && allgood
+				err = r.Close()
+				if err != nil {
+					fmt.Printf("error closing entry %s: %v\n", f.Name, err)
+					allgood = false
+					continue
+				}
 			}
 		default:
 			fmt.Printf("error: unknown magic header %q\n", string(hdr[:]))
@@ -112,29 +117,17 @@ func display(f io.Reader, fname string) bool {
 
 	fmt.Printf("npy-header: %v\n", r.Header)
 
-	if len(r.Header.Descr.Shape) > 2 {
-		rt := npyio.TypeFrom(r.Header.Descr.Type)
-		if rt == nil {
-			fmt.Printf("error: no reflect.Type for %q\n", r.Header.Descr.Type)
-			return false
-		}
-		rv := reflect.New(reflect.SliceOf(rt))
-		err = r.Read(rv.Interface())
-		if err != nil {
-			fmt.Printf("error: %v\n", err)
-			return false
-		}
-		fmt.Printf("data = %v\n", rv.Elem().Interface())
-		return true
-	}
-
-	var m mat64.Dense
-	err = r.Read(&m)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
+	rt := npyio.TypeFrom(r.Header.Descr.Type)
+	if rt == nil {
+		fmt.Printf("error: no reflect.Type for %q\n", r.Header.Descr.Type)
 		return false
 	}
-
-	fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
+	rv := reflect.New(reflect.SliceOf(rt))
+	err = r.Read(rv.Interface())
+	if err != nil && err != io.EOF {
+		fmt.Printf("read error: %v\n", err)
+		return false
+	}
+	fmt.Printf("data = %v\n", rv.Elem().Interface())
 	return true
 }

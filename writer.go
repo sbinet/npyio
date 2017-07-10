@@ -517,9 +517,16 @@ func shapeFrom(rv reflect.Value) ([]int, error) {
 	rt := rv.Type()
 	switch rt.Kind() {
 	case reflect.Array, reflect.Slice:
-		return []int{rv.Len()}, nil
+		eshape, err := shapeFrom(rv.Index(0))
+		if err != nil {
+			return nil, err
+		}
+		return append([]int{rv.Len()}, eshape...), nil
 
-	case reflect.String, reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
+	case reflect.String:
+		return nil, nil
+
+	case reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
 		return nil, fmt.Errorf("npyio: type %v not supported", rt)
 	}
 

@@ -645,25 +645,6 @@ func (r *Reader) Read(ptr interface{}) error {
 			*vptr = string(buf)
 			return r.err
 		}
-
-		/*
-			case *rune:
-				if dt != runeType {
-					return ErrTypeMismatch
-				}
-				buf, err := ioutil.ReadAll(io.LimitReader(r.r, 4*int64(stringLen(r.Header.Descr.Type))))
-				if err != nil {
-					r.err = err
-					return r.err
-				}
-				n := bytes.Index(buf, []byte{0})
-				if n > 0 {
-					buf = buf[:n]
-				}
-				*vptr = rune(string(buf)[0])
-				return r.err
-		*/
-
 	}
 
 	rv = reflect.Indirect(rv)

@@ -624,7 +624,7 @@ func (r *Reader) Read(ptr interface{}) error {
 				return r.err
 			}
 			var str string
-			for len(raw) > 0 && raw[0] != '0' {
+			for len(raw) > 0 {
 				r, size := utf8.DecodeRune(raw)
 				str += string(r)
 				raw = raw[size:]

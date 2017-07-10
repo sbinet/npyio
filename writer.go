@@ -467,10 +467,10 @@ func dtypeFrom(rv reflect.Value, rt reflect.Type) (string, error) {
 		return "<c16", nil
 
 	case reflect.Array:
-		rt = rt.Elem()
-		switch rt.Kind() {
+		et := rt.Elem()
+		switch et.Kind() {
 		default:
-			return dtypeFrom(reflect.Value{}, rt)
+			return dtypeFrom(reflect.Value{}, et)
 		case reflect.String:
 			slice := rv.Slice(0, rt.Len()).Interface().([]string)
 			n := 0

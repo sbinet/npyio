@@ -66,8 +66,6 @@ var (
 	errDims   = errors.New("npyio: invalid dimensions")
 	errNoConv = errors.New("npyio: no legal type conversion")
 
-	ble = binary.LittleEndian
-
 	// ErrInvalidNumPyFormat is the error returned by NewReader when
 	// the underlying io.Reader is not a valid or recognized NumPy data
 	// file format.
@@ -130,7 +128,121 @@ var (
 	float64Type    = reflect.TypeOf((*float64)(nil)).Elem()
 	complex64Type  = reflect.TypeOf((*complex64)(nil)).Elem()
 	complex128Type = reflect.TypeOf((*complex128)(nil)).Elem()
+	stringType     = reflect.TypeOf((*string)(nil)).Elem()
 
 	trueUint8  = []byte{1}
 	falseUint8 = []byte{0}
 )
+
+type dType struct {
+	str   string
+	utf   bool
+	size  int
+	order binary.ByteOrder
+	rt    reflect.Type
+}
+
+func newDtype(str string) (dType, error) {
+	var (
+		err error
+		dt  = dType{
+			str:   str,
+			order: nativeEndian,
+		}
+	)
+	switch str {
+	case "b1", "<b1", "|b1", "bool":
+		dt.rt = boolType
+		dt.size = 1
+
+	case "u1", "<u1", "|u1", "uint8":
+		dt.rt = uint8Type
+		dt.size = 1
+
+	case "u2", "<u2", "|u2", ">u2", "uint16":
+		dt.rt = uint16Type
+		dt.size = 2
+
+	case "u4", "<u4", "|u4", ">u4", "uint32":
+		dt.rt = uint32Type
+		dt.size = 4
+
+	case "u8", "<u8", "|u8", ">u8", "uint64":
+		dt.rt = uint64Type
+		dt.size = 8
+
+	case "i1", "<i1", "|i1", ">i1", "int8":
+		dt.rt = int8Type
+		dt.size = 1
+
+	case "i2", "<i2", "|i2", ">i2", "int16":
+		dt.rt = int16Type
+		dt.size = 2
+
+	case "i4", "<i4", "|i4", ">i4", "int32":
+		dt.rt = int32Type
+		dt.size = 4
+
+	case "i8", "<i8", "|i8", ">i8", "int64":
+		dt.rt = int64Type
+		dt.size = 8
+
+	case "f4", "<f4", "|f4", ">f4", "float32":
+		dt.rt = float32Type
+		dt.size = 4
+
+	case "f8", "<f8", "|f8", ">f8", "float64":
+		dt.rt = float64Type
+		dt.size = 8
+
+	case "c8", "<c8", "|c8", ">c8", "complex64":
+		dt.rt = complex64Type
+		dt.size = 8
+
+	case "c16", "<c16", "|c16", ">c16", "complex128":
+		dt.rt = complex128Type
+		dt.size = 16
+	}
+
+	switch {
+	case reStrPre.MatchString(str), reStrPost.MatchString(str):
+		dt.rt = stringType
+		dt.size, err = stringLen(str)
+		if err != nil {
+			return dt, err
+		}
+
+	case reUniPre.MatchString(str), reUniPost.MatchString(str):
+		dt.rt = stringType
+		dt.utf = true
+		dt.size, err = stringLen(str)
+		if err != nil {
+			return dt, err
+		}
+	}
+	if dt.rt == nil {
+		return dt, fmt.Errorf("npyio: no reflect.Type for dtype=%v", str)
+	}
+
+	switch dt.str[0] {
+	case '<':
+		dt.order = binary.LittleEndian
+	case '>':
+		dt.order = binary.BigEndian
+	default:
+		dt.order = nativeEndian
+	}
+	return dt, nil
+}
+
+var nativeEndian binary.ByteOrder
+
+func init() {
+	v := uint16(1)
+	switch byte(v >> 8) {
+	case 0:
+		nativeEndian = binary.LittleEndian
+	case 1:
+		nativeEndian = binary.BigEndian
+	}
+}

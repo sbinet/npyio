@@ -9,10 +9,13 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gonum/matrix/mat64"
 )
@@ -43,6 +46,7 @@ type Reader struct {
 	err error // last error
 
 	Header Header
+	order  binary.ByteOrder
 }
 
 // NewReader creates a new NumPy data file format reader.
@@ -59,6 +63,7 @@ func (r *Reader) readHeader() {
 	if r.err != nil {
 		return
 	}
+	r.order = binary.LittleEndian
 	var magic [6]byte
 	r.read(&magic)
 	if r.err != nil {
@@ -161,6 +166,10 @@ func (r *Reader) readDescr(buf []byte) {
 //
 // See npyio.Read() for documentation.
 func (r *Reader) Read(ptr interface{}) error {
+	if r.err != nil {
+		return r.err
+	}
+
 	rv := reflect.ValueOf(ptr)
 	if !rv.IsValid() || rv.Kind() != reflect.Ptr {
 		return errNotPtr
@@ -171,10 +180,11 @@ func (r *Reader) Read(ptr interface{}) error {
 	}
 
 	nelems := numElems(r.Header.Descr.Shape)
-	dt := TypeFrom(r.Header.Descr.Type)
-	if dt == nil {
-		return fmt.Errorf("npyio: no reflect.Type for dtype=%v", r.Header.Descr.Type)
+	dt, err := newDtype(r.Header.Descr.Type)
+	if err != nil {
+		return err
 	}
+	r.order = dt.order
 
 	switch vptr := ptr.(type) {
 	case *int, *uint, *[]int, *[]uint:
@@ -183,12 +193,14 @@ func (r *Reader) Read(ptr interface{}) error {
 	case *mat64.Dense:
 		var data []float64
 		err := r.Read(&data)
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
 		nrows, ncols, err := dimsFromShape(r.Header.Descr.Shape)
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
 		if r.Header.Descr.Fortran {
 			*vptr = *mat64.NewDense(nrows, ncols, nil)
@@ -205,13 +217,14 @@ func (r *Reader) Read(ptr interface{}) error {
 		return r.err
 
 	case *bool:
-		if dt != boolType {
+		if dt.rt != boolType {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
 		switch buf[0] {
 		case 0:
@@ -219,18 +232,19 @@ func (r *Reader) Read(ptr interface{}) error {
 		case 1:
 			*vptr = true
 		}
-		return nil
+		return r.err
 
 	case *[]bool:
-		if dt != boolType {
+		if dt.rt != boolType {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]bool, nelems)
 		var buf [1]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
 			switch buf[0] {
 			case 0:
@@ -239,339 +253,416 @@ func (r *Reader) Read(ptr interface{}) error {
 				(*vptr)[i] = true
 			}
 		}
-		return nil
+		return r.err
 
 	case *int8:
-		if dt != int8Type {
+		if dt.rt != int8Type {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
 		*vptr = int8(buf[0])
-		return nil
+		return r.err
 
 	case *[]int8:
-		if dt != int8Type {
+		if dt.rt != int8Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]int8, nelems)
 		var buf [1]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
 			(*vptr)[i] = int8(buf[0])
 		}
-		return nil
+		return r.err
 
 	case *int16:
-		if dt != int16Type {
+		if dt.rt != int16Type {
 			return ErrTypeMismatch
 		}
 		var buf [2]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = int16(ble.Uint16(buf[:]))
-		return nil
+		*vptr = int16(dt.order.Uint16(buf[:]))
+		return r.err
 
 	case *[]int16:
-		if dt != int16Type {
+		if dt.rt != int16Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]int16, nelems)
 		var buf [2]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = int16(ble.Uint16(buf[:]))
+			(*vptr)[i] = int16(dt.order.Uint16(buf[:]))
 		}
-		return nil
+		return r.err
 
 	case *int32:
-		if dt != int32Type {
+		if dt.rt != int32Type {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = int32(ble.Uint32(buf[:]))
-		return nil
+		*vptr = int32(dt.order.Uint32(buf[:]))
+		return r.err
 
 	case *[]int32:
-		if dt != int32Type {
+		if dt.rt != int32Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]int32, nelems)
 		var buf [4]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = int32(ble.Uint32(buf[:]))
+			(*vptr)[i] = int32(dt.order.Uint32(buf[:]))
 		}
-		return nil
+		return r.err
 
 	case *int64:
-		if dt != int64Type {
+		if dt.rt != int64Type {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = int64(ble.Uint64(buf[:]))
-		return nil
+		*vptr = int64(dt.order.Uint64(buf[:]))
+		return r.err
 
 	case *[]int64:
-		if dt != int64Type {
+		if dt.rt != int64Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]int64, nelems)
 		var buf [8]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = int64(ble.Uint64(buf[:]))
+			(*vptr)[i] = int64(dt.order.Uint64(buf[:]))
 		}
-		return nil
+		return r.err
 
 	case *uint8:
-		if dt != uint8Type {
+		if dt.rt != uint8Type {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
 		*vptr = buf[0]
-		return nil
+		return r.err
 
 	case *[]uint8:
-		if dt != uint8Type {
+		if dt.rt != uint8Type {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
 		*vptr = make([]uint8, nelems)
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
 			(*vptr)[i] = buf[0]
 		}
-		return nil
+		return r.err
 
 	case *uint16:
-		if dt != uint16Type {
+		if dt.rt != uint16Type {
 			return ErrTypeMismatch
 		}
 		var buf [2]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = ble.Uint16(buf[:])
-		return nil
+		*vptr = dt.order.Uint16(buf[:])
+		return r.err
 
 	case *[]uint16:
-		if dt != uint16Type {
+		if dt.rt != uint16Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]uint16, nelems)
 		var buf [2]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = ble.Uint16(buf[:])
+			(*vptr)[i] = dt.order.Uint16(buf[:])
 		}
-		return nil
+		return r.err
 
 	case *uint32:
-		if dt != uint32Type {
+		if dt.rt != uint32Type {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = ble.Uint32(buf[:])
-		return nil
+		*vptr = dt.order.Uint32(buf[:])
+		return r.err
 
 	case *[]uint32:
-		if dt != uint32Type {
+		if dt.rt != uint32Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]uint32, nelems)
 		var buf [4]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = ble.Uint32(buf[:])
+			(*vptr)[i] = dt.order.Uint32(buf[:])
 		}
-		return nil
+		return r.err
 
 	case *uint64:
-		if dt != uint64Type {
+		if dt.rt != uint64Type {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = ble.Uint64(buf[:])
-		return nil
+		*vptr = dt.order.Uint64(buf[:])
+		return r.err
 
 	case *[]uint64:
-		if dt != uint64Type {
+		if dt.rt != uint64Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]uint64, nelems)
 		var buf [8]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = ble.Uint64(buf[:])
+			(*vptr)[i] = dt.order.Uint64(buf[:])
 		}
-		return nil
+		return r.err
 
 	case *float32:
-		if dt != float32Type {
+		if dt.rt != float32Type {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = math.Float32frombits(ble.Uint32(buf[:]))
-		return nil
+		*vptr = math.Float32frombits(dt.order.Uint32(buf[:]))
+		return r.err
 
 	case *[]float32:
-		if dt != float32Type {
+		if dt.rt != float32Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]float32, nelems)
 		var buf [4]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = math.Float32frombits(ble.Uint32(buf[:]))
+			(*vptr)[i] = math.Float32frombits(dt.order.Uint32(buf[:]))
 		}
-		return nil
+		return r.err
 
 	case *float64:
-		if dt != float64Type {
+		if dt.rt != float64Type {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		*vptr = math.Float64frombits(ble.Uint64(buf[:]))
-		return nil
+		*vptr = math.Float64frombits(dt.order.Uint64(buf[:]))
+		return r.err
 
 	case *[]float64:
-		if dt != float64Type {
+		if dt.rt != float64Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]float64, nelems)
 		var buf [8]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			(*vptr)[i] = math.Float64frombits(ble.Uint64(buf[:]))
+			(*vptr)[i] = math.Float64frombits(dt.order.Uint64(buf[:]))
 		}
-		return nil
+		return r.err
 
 	case *complex64:
-		if dt != complex64Type {
+		if dt.rt != complex64Type {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		rcplx := math.Float32frombits(ble.Uint32(buf[0:4]))
-		icplx := math.Float32frombits(ble.Uint32(buf[4:8]))
+		rcplx := math.Float32frombits(dt.order.Uint32(buf[0:4]))
+		icplx := math.Float32frombits(dt.order.Uint32(buf[4:8]))
 		*vptr = complex(rcplx, icplx)
-		return nil
+		return r.err
 
 	case *[]complex64:
-		if dt != complex64Type {
+		if dt.rt != complex64Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]complex64, nelems)
 		var buf [8]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			rcplx := math.Float32frombits(ble.Uint32(buf[0:4]))
-			icplx := math.Float32frombits(ble.Uint32(buf[4:8]))
+			rcplx := math.Float32frombits(dt.order.Uint32(buf[0:4]))
+			icplx := math.Float32frombits(dt.order.Uint32(buf[4:8]))
 			(*vptr)[i] = complex(rcplx, icplx)
 		}
-		return nil
+		return r.err
 
 	case *complex128:
-		if dt != complex128Type {
+		if dt.rt != complex128Type {
 			return ErrTypeMismatch
 		}
 		var buf [16]byte
 		_, err := r.r.Read(buf[:])
-		if err != nil {
-			return err
+		if err != nil && err != io.EOF {
+			r.err = err
+			return r.err
 		}
-		rcplx := math.Float64frombits(ble.Uint64(buf[0:8]))
-		icplx := math.Float64frombits(ble.Uint64(buf[8:16]))
+		rcplx := math.Float64frombits(dt.order.Uint64(buf[0:8]))
+		icplx := math.Float64frombits(dt.order.Uint64(buf[8:16]))
 		*vptr = complex(rcplx, icplx)
-		return nil
+		return r.err
 
 	case *[]complex128:
-		if dt != complex128Type {
+		if dt.rt != complex128Type {
 			return ErrTypeMismatch
 		}
 		*vptr = make([]complex128, nelems)
 		var buf [16]byte
 		for i := 0; i < nelems; i++ {
 			_, err := r.r.Read(buf[:])
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
-			rcplx := math.Float64frombits(ble.Uint64(buf[0:8]))
-			icplx := math.Float64frombits(ble.Uint64(buf[8:16]))
+			rcplx := math.Float64frombits(dt.order.Uint64(buf[0:8]))
+			icplx := math.Float64frombits(dt.order.Uint64(buf[8:16]))
 			(*vptr)[i] = complex(rcplx, icplx)
 		}
-		return nil
+		return r.err
+
+	case *string:
+		if dt.rt != stringType {
+			return ErrTypeMismatch
+		}
+
+		switch {
+		case dt.utf:
+			raw, err := ioutil.ReadAll(io.LimitReader(r.r, utf8.UTFMax*int64(dt.size)))
+			if err != nil {
+				r.err = err
+				return r.err
+			}
+			var str string
+			for len(raw) > 0 && raw[0] != '0' {
+				r, size := utf8.DecodeRune(raw)
+				str += string(r)
+				raw = raw[size:]
+			}
+			*vptr = str
+			return r.err
+
+		case !dt.utf:
+			buf, err := ioutil.ReadAll(io.LimitReader(r.r, int64(dt.size)))
+			if err != nil {
+				r.err = err
+				return r.err
+			}
+			n := bytes.Index(buf, []byte{0})
+			if n > 0 {
+				buf = buf[:n]
+			}
+			*vptr = string(buf)
+			return r.err
+		}
+
+		/*
+			case *rune:
+				if dt != runeType {
+					return ErrTypeMismatch
+				}
+				buf, err := ioutil.ReadAll(io.LimitReader(r.r, 4*int64(stringLen(r.Header.Descr.Type))))
+				if err != nil {
+					r.err = err
+					return r.err
+				}
+				n := bytes.Index(buf, []byte{0})
+				if n > 0 {
+					buf = buf[:n]
+				}
+				*vptr = rune(string(buf)[0])
+				return r.err
+		*/
 
 	}
 
@@ -580,12 +671,13 @@ func (r *Reader) Read(ptr interface{}) error {
 	case reflect.Slice:
 		rv.SetLen(0)
 		elt := rv.Type().Elem()
-		v := reflect.New(dt).Elem()
+		v := reflect.New(dt.rt).Elem()
 		slice := rv
 		for i := 0; i < nelems; i++ {
 			err := r.Read(v.Addr().Interface())
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
 			slice = reflect.Append(slice, v.Convert(elt))
 		}
@@ -598,18 +690,19 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 
 		elt := rv.Type().Elem()
-		v := reflect.New(dt).Elem()
+		v := reflect.New(dt.rt).Elem()
 		for i := 0; i < nelems; i++ {
 			err := r.Read(v.Addr().Interface())
-			if err != nil {
-				return err
+			if err != nil && err != io.EOF {
+				r.err = err
+				return r.err
 			}
 			rv.Index(i).Set(v.Convert(elt))
 		}
 		return r.err
 
 	case reflect.Bool:
-		if !dt.ConvertibleTo(rv.Type()) {
+		if !dt.rt.ConvertibleTo(rv.Type()) {
 			return errNoConv
 		}
 		var v uint8
@@ -622,8 +715,8 @@ func (r *Reader) Read(ptr interface{}) error {
 		reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64,
 		reflect.Float32, reflect.Float64,
 		reflect.Complex64, reflect.Complex128:
-		v := reflect.New(dt).Elem()
-		if !dt.ConvertibleTo(rv.Type()) {
+		v := reflect.New(dt.rt).Elem()
+		if !dt.rt.ConvertibleTo(rv.Type()) {
 			return errNoConv
 		}
 		r.read(v.Addr().Interface())
@@ -665,7 +758,7 @@ func (r *Reader) read(v interface{}) {
 	if r.err != nil {
 		return
 	}
-	r.err = binary.Read(r.r, ble, v)
+	r.err = binary.Read(r.r, r.order, v)
 }
 
 func numElems(shape []int) int {
@@ -678,33 +771,56 @@ func numElems(shape []int) int {
 
 // TypeFrom returns the reflect.Type corresponding to the numpy-dtype string, if any.
 func TypeFrom(dtype string) reflect.Type {
-	switch dtype {
-	case "b1", "<b1", "|b1", "bool":
-		return reflect.TypeOf(false)
-	case "u1", "<u1", "|u1", "uint8":
-		return reflect.TypeOf(uint8(0))
-	case "<u2", "uint16":
-		return reflect.TypeOf(uint16(0))
-	case "<u4", "uint32":
-		return reflect.TypeOf(uint32(0))
-	case "<u8", "uint64":
-		return reflect.TypeOf(uint64(0))
-	case "i1", "|i1", "<i1", "int8":
-		return reflect.TypeOf(int8(0))
-	case "<i2", "int16":
-		return reflect.TypeOf(int16(0))
-	case "<i4", "int32":
-		return reflect.TypeOf(int32(0))
-	case "<i8", "int64":
-		return reflect.TypeOf(int64(0))
-	case "<f4", "float32":
-		return reflect.TypeOf(float32(0))
-	case "<f8", "float64":
-		return reflect.TypeOf(float64(0))
-	case "<c8", "complex64":
-		return reflect.TypeOf(complex64(0))
-	case "<c16", "complex128":
-		return reflect.TypeOf(complex128(0))
+	dt, err := newDtype(dtype)
+	if err != nil {
+		return nil
 	}
-	return nil
+	return dt.rt
+}
+
+var (
+	reStrPre  = regexp.MustCompile(`^[|]*?(\d.*)[Sa]$`)
+	reStrPost = regexp.MustCompile(`^[|]*?[Sa](\d.*)$`)
+	reUniPre  = regexp.MustCompile(`^[<|>]*?(\d.*)U$`)
+	reUniPost = regexp.MustCompile(`^[<|>]*?U(\d.*)$`)
+)
+
+func mustStringLen(dtype string) int {
+	v, err := stringLen(dtype)
+	if err != nil {
+		panic(err)
+	}
+	return v
+}
+
+func stringLen(dtype string) (int, error) {
+	if m := reStrPre.FindStringSubmatch(dtype); m != nil {
+		v, err := strconv.Atoi(m[1])
+		if err != nil {
+			return 0, err
+		}
+		return int(v), nil
+	}
+	if m := reStrPost.FindStringSubmatch(dtype); m != nil {
+		v, err := strconv.Atoi(m[1])
+		if err != nil {
+			return 0, err
+		}
+		return int(v), nil
+	}
+	if m := reUniPre.FindStringSubmatch(dtype); m != nil {
+		v, err := strconv.Atoi(m[1])
+		if err != nil {
+			return 0, err
+		}
+		return int(v), nil
+	}
+	if m := reUniPost.FindStringSubmatch(dtype); m != nil {
+		v, err := strconv.Atoi(m[1])
+		if err != nil {
+			return 0, err
+		}
+		return int(v), nil
+	}
+	return 0, fmt.Errorf("npyio: %q is not a string-like dtype", dtype)
 }

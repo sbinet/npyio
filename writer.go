@@ -13,6 +13,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/gonum/matrix/mat64"
 )
@@ -32,7 +33,7 @@ var (
 func Write(w io.Writer, val interface{}) error {
 	hdr := newHeader()
 	rv := reflect.Indirect(reflect.ValueOf(val))
-	dt, err := dtypeFrom(rv.Type())
+	dt, err := dtypeFrom(rv, rv.Type())
 	if err != nil {
 		return err
 	}
@@ -43,24 +44,29 @@ func Write(w io.Writer, val interface{}) error {
 	hdr.Descr.Type = dt
 	hdr.Descr.Shape = shape
 
-	err = writeHeader(w, hdr)
+	rdt, err := newDtype(hdr.Descr.Type)
 	if err != nil {
 		return err
 	}
 
-	return writeData(w, rv)
+	err = writeHeader(w, hdr, rdt)
+	if err != nil {
+		return err
+	}
+
+	return writeData(w, rv, rdt)
 }
 
-func writeHeader(w io.Writer, hdr Header) error {
-	err := binary.Write(w, ble, Magic[:])
+func writeHeader(w io.Writer, hdr Header, dt dType) error {
+	err := binary.Write(w, dt.order, Magic[:])
 	if err != nil {
 		return err
 	}
-	err = binary.Write(w, ble, hdr.Major)
+	err = binary.Write(w, dt.order, hdr.Major)
 	if err != nil {
 		return err
 	}
-	err = binary.Write(w, ble, hdr.Minor)
+	err = binary.Write(w, dt.order, hdr.Minor)
 	if err != nil {
 		return err
 	}
@@ -93,9 +99,9 @@ func writeHeader(w io.Writer, hdr Header) error {
 	buflen := int64(buf.Len())
 	switch hdr.Major {
 	case 1:
-		err = binary.Write(w, ble, uint16(buflen))
+		err = binary.Write(w, dt.order, uint16(buflen))
 	case 2:
-		err = binary.Write(w, ble, uint32(buflen))
+		err = binary.Write(w, dt.order, uint32(buflen))
 	default:
 		return fmt.Errorf("npyio: invalid major version number (%d)", hdr.Major)
 	}
@@ -115,7 +121,7 @@ func writeHeader(w io.Writer, hdr Header) error {
 	return nil
 }
 
-func writeData(w io.Writer, rv reflect.Value) error {
+func writeData(w io.Writer, rv reflect.Value, dt dType) error {
 	rt := rv.Type()
 	if rt == rtDense {
 		m := rv.Interface().(mat64.Dense)
@@ -123,7 +129,7 @@ func writeData(w io.Writer, rv reflect.Value) error {
 		var buf [8]byte
 		for i := 0; i < nrows; i++ {
 			for j := 0; j < ncols; j++ {
-				ble.PutUint64(buf[:], math.Float64bits(m.At(i, j)))
+				dt.order.PutUint64(buf[:], math.Float64bits(m.At(i, j)))
 				_, err := w.Write(buf[:])
 				if err != nil {
 					return err
@@ -176,14 +182,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case uint16:
 		var buf [2]byte
-		ble.PutUint16(buf[:], v)
+		dt.order.PutUint16(buf[:], v)
 		_, err := w.Write(buf[:])
 		return err
 
 	case []uint16:
 		var buf [2]byte
 		for _, vv := range v {
-			ble.PutUint16(buf[:], vv)
+			dt.order.PutUint16(buf[:], vv)
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -193,14 +199,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case uint32:
 		var buf [4]byte
-		ble.PutUint32(buf[:], v)
+		dt.order.PutUint32(buf[:], v)
 		_, err := w.Write(buf[:])
 		return err
 
 	case []uint32:
 		var buf [4]byte
 		for _, vv := range v {
-			ble.PutUint32(buf[:], vv)
+			dt.order.PutUint32(buf[:], vv)
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -210,14 +216,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case uint64:
 		var buf [8]byte
-		ble.PutUint64(buf[:], v)
+		dt.order.PutUint64(buf[:], v)
 		_, err := w.Write(buf[:])
 		return err
 
 	case []uint64:
 		var buf [8]byte
 		for _, vv := range v {
-			ble.PutUint64(buf[:], vv)
+			dt.order.PutUint64(buf[:], vv)
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -243,14 +249,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case int16:
 		var buf [2]byte
-		ble.PutUint16(buf[:], uint16(v))
+		dt.order.PutUint16(buf[:], uint16(v))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []int16:
 		var buf [2]byte
 		for _, vv := range v {
-			ble.PutUint16(buf[:], uint16(vv))
+			dt.order.PutUint16(buf[:], uint16(vv))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -260,14 +266,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case int32:
 		var buf [4]byte
-		ble.PutUint32(buf[:], uint32(v))
+		dt.order.PutUint32(buf[:], uint32(v))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []int32:
 		var buf [4]byte
 		for _, vv := range v {
-			ble.PutUint32(buf[:], uint32(vv))
+			dt.order.PutUint32(buf[:], uint32(vv))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -277,14 +283,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case int64:
 		var buf [8]byte
-		ble.PutUint64(buf[:], uint64(v))
+		dt.order.PutUint64(buf[:], uint64(v))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []int64:
 		var buf [8]byte
 		for _, vv := range v {
-			ble.PutUint64(buf[:], uint64(vv))
+			dt.order.PutUint64(buf[:], uint64(vv))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -294,14 +300,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case float32:
 		var buf [4]byte
-		ble.PutUint32(buf[:], math.Float32bits(v))
+		dt.order.PutUint32(buf[:], math.Float32bits(v))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []float32:
 		var buf [4]byte
 		for _, v := range v {
-			ble.PutUint32(buf[:], math.Float32bits(v))
+			dt.order.PutUint32(buf[:], math.Float32bits(v))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -311,14 +317,14 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case float64:
 		var buf [8]byte
-		ble.PutUint64(buf[:], math.Float64bits(v))
+		dt.order.PutUint64(buf[:], math.Float64bits(v))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []float64:
 		var buf [8]byte
 		for _, v := range v {
-			ble.PutUint64(buf[:], math.Float64bits(v))
+			dt.order.PutUint64(buf[:], math.Float64bits(v))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -328,16 +334,16 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case complex64:
 		var buf [8]byte
-		ble.PutUint32(buf[0:4], math.Float32bits(real(v)))
-		ble.PutUint32(buf[4:8], math.Float32bits(imag(v)))
+		dt.order.PutUint32(buf[0:4], math.Float32bits(real(v)))
+		dt.order.PutUint32(buf[4:8], math.Float32bits(imag(v)))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []complex64:
 		var buf [8]byte
 		for _, v := range v {
-			ble.PutUint32(buf[0:4], math.Float32bits(real(v)))
-			ble.PutUint32(buf[4:8], math.Float32bits(imag(v)))
+			dt.order.PutUint32(buf[0:4], math.Float32bits(real(v)))
+			dt.order.PutUint32(buf[4:8], math.Float32bits(imag(v)))
 			_, err := w.Write(buf[:])
 			if err != nil {
 				return err
@@ -347,17 +353,55 @@ func writeData(w io.Writer, rv reflect.Value) error {
 
 	case complex128:
 		var buf [16]byte
-		ble.PutUint64(buf[0:8], math.Float64bits(real(v)))
-		ble.PutUint64(buf[8:16], math.Float64bits(imag(v)))
+		dt.order.PutUint64(buf[0:8], math.Float64bits(real(v)))
+		dt.order.PutUint64(buf[8:16], math.Float64bits(imag(v)))
 		_, err := w.Write(buf[:])
 		return err
 
 	case []complex128:
 		var buf [16]byte
 		for _, v := range v {
-			ble.PutUint64(buf[0:8], math.Float64bits(real(v)))
-			ble.PutUint64(buf[8:16], math.Float64bits(imag(v)))
+			dt.order.PutUint64(buf[0:8], math.Float64bits(real(v)))
+			dt.order.PutUint64(buf[8:16], math.Float64bits(imag(v)))
 			_, err := w.Write(buf[:])
+			if err != nil {
+				return err
+			}
+		}
+		return nil
+
+	case string:
+		o := []byte(v)
+		o = append(o, 0)
+		_, err := w.Write(o)
+		if err != nil {
+			return err
+		}
+		return nil
+
+	case []string:
+		n := dt.size
+		switch {
+		case dt.utf:
+			for _, str := range v {
+				o := make([]byte, n*utf8.UTFMax)
+				i := 0
+				for _, v := range str {
+					dt.order.PutUint32(o[i:i+utf8.UTFMax], uint32(v))
+					i += utf8.UTFMax
+				}
+				_, err := w.Write(o)
+				if err != nil {
+					return err
+				}
+			}
+
+		case !dt.utf:
+			o := make([]byte, len(v)*n)
+			for i, v := range v {
+				copy(o[i:i+n], []byte(v))
+			}
+			_, err := w.Write(o)
 			if err != nil {
 				return err
 			}
@@ -372,24 +416,24 @@ func writeData(w io.Writer, rv reflect.Value) error {
 			n := rv.Len()
 			for i := 0; i < n; i++ {
 				elem := rv.Index(i)
-				err := writeData(w, elem)
+				err := writeData(w, elem, dt)
 				if err != nil {
 					return err
 				}
 			}
 			return nil
 		default:
-			return binary.Write(w, ble, v)
+			return binary.Write(w, dt.order, v)
 		}
 
-	case reflect.Interface, reflect.String, reflect.Chan, reflect.Map, reflect.Struct:
+	case reflect.Interface, reflect.Chan, reflect.Map, reflect.Struct:
 		return fmt.Errorf("npyio: type %v not supported", rt)
 	}
 
-	return binary.Write(w, ble, v)
+	return binary.Write(w, dt.order, v)
 }
 
-func dtypeFrom(rt reflect.Type) (string, error) {
+func dtypeFrom(rv reflect.Value, rt reflect.Type) (string, error) {
 	if rt == rtDense {
 		return "<f8", nil
 	}
@@ -422,10 +466,42 @@ func dtypeFrom(rt reflect.Type) (string, error) {
 	case reflect.Complex128:
 		return "<c16", nil
 
-	case reflect.Array, reflect.Slice:
-		return dtypeFrom(rt.Elem())
+	case reflect.Array:
+		rt = rt.Elem()
+		switch rt.Kind() {
+		default:
+			return dtypeFrom(reflect.Value{}, rt)
+		case reflect.String:
+			slice := rv.Slice(0, rt.Len()).Interface().([]string)
+			n := 0
+			for _, str := range slice {
+				if len(str) > n {
+					n = len(str)
+				}
+			}
+			return fmt.Sprintf("<U%d", n), nil
+		}
 
-	case reflect.String, reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
+	case reflect.Slice:
+		rt = rt.Elem()
+		switch rt.Kind() {
+		default:
+			return dtypeFrom(reflect.Value{}, rt)
+		case reflect.String:
+			slice := rv.Interface().([]string)
+			n := 0
+			for _, str := range slice {
+				if len(str) > n {
+					n = len(str)
+				}
+			}
+			return fmt.Sprintf("<U%d", n), nil
+		}
+
+	case reflect.String:
+		return fmt.Sprintf("<U%d", len(rv.Interface().(string))), nil
+
+	case reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
 		return "", fmt.Errorf("npyio: type %v not supported", rt)
 	}
 

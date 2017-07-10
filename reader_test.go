@@ -283,3 +283,114 @@ func TestReaderNpz(t *testing.T) {
 		}
 	}
 }
+
+func TestStringLenDtype(t *testing.T) {
+	for _, test := range []struct {
+		dtype string
+		want  int
+		err   bool
+	}{
+		{
+			dtype: "S66",
+			want:  66,
+		},
+		{
+			dtype: "S6",
+			want:  6,
+		},
+		{
+			dtype: "6S",
+			want:  6,
+		},
+		{
+			dtype: "66S",
+			want:  66,
+		},
+		{
+			dtype: "|S6",
+			want:  6,
+		},
+		{
+			dtype: "|S66",
+			want:  66,
+		},
+		{
+			dtype: "|6S",
+			want:  6,
+		},
+		{
+			dtype: "|66S",
+			want:  66,
+		},
+		{
+			dtype: "a6",
+			want:  6,
+		},
+		{
+			dtype: "6a",
+			want:  6,
+		},
+		{
+			dtype: "|a6",
+			want:  6,
+		},
+		{
+			dtype: "|6a",
+			want:  6,
+		},
+		{
+			dtype: "<U25",
+			want:  25,
+		},
+		{
+			dtype: "|U25",
+			want:  25,
+		},
+		{
+			dtype: ">U25",
+			want:  25,
+		},
+		{
+			dtype: "<25U",
+			want:  25,
+		},
+		{
+			dtype: "|25U",
+			want:  25,
+		},
+		{
+			dtype: ">25U",
+			want:  25,
+		},
+		{
+			dtype: "6S6",
+			err:   true,
+		},
+		{
+			dtype: "6a6",
+			err:   true,
+		},
+		{
+			dtype: "6U6",
+			err:   true,
+		},
+		{
+			dtype: "<i4",
+			err:   true,
+		},
+	} {
+		n, err := stringLen(test.dtype)
+		if err == nil && test.err {
+			t.Errorf("%s: expected an error", test.dtype)
+			continue
+		}
+		if err != nil && !test.err {
+			t.Errorf("%s: error=%v", test.dtype, err)
+			continue
+		}
+		if n != test.want {
+			t.Errorf("%s: got=%d. want=%d", test.dtype, n, test.want)
+			continue
+		}
+	}
+}

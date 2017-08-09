@@ -17,7 +17,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
 )
 
 // Read reads the data from the r NumPy data file io.Reader, into the
@@ -25,7 +25,7 @@ import (
 // Read returns an error if the on-disk data type and the one provided
 // don't match.
 //
-// If a *mat64.Dense matrix is passed to Read, the numpy-array data is loaded
+// If a *mat.Dense matrix is passed to Read, the numpy-array data is loaded
 // into the Dense matrix, honouring Fortran/C-order and dimensions/shape
 // parameters.
 //
@@ -190,7 +190,7 @@ func (r *Reader) Read(ptr interface{}) error {
 	case *int, *uint, *[]int, *[]uint:
 		return ErrInvalidType
 
-	case *mat64.Dense:
+	case *mat.Dense:
 		var data []float64
 		err := r.Read(&data)
 		if err != nil && err != io.EOF {
@@ -203,7 +203,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return r.err
 		}
 		if r.Header.Descr.Fortran {
-			*vptr = *mat64.NewDense(nrows, ncols, nil)
+			*vptr = *mat.NewDense(nrows, ncols, nil)
 			i := 0
 			for icol := 0; icol < ncols; icol++ {
 				for irow := 0; irow < nrows; irow++ {
@@ -212,7 +212,7 @@ func (r *Reader) Read(ptr interface{}) error {
 				}
 			}
 		} else {
-			*vptr = *mat64.NewDense(nrows, ncols, data)
+			*vptr = *mat.NewDense(nrows, ncols, data)
 		}
 		return r.err
 

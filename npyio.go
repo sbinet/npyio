@@ -3,11 +3,11 @@
 // license that can be found in the LICENSE file.
 
 // Package npyio provides read/write access to files following the NumPy data file format:
-//  http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html
+//  https://docs.scipy.org/doc/numpy/neps/npy-format.html
 //
 // Supported types
 //
-// npyio supports r/w of scalars, arrays, slices and mat64.Dense.
+// npyio supports r/w of scalars, arrays, slices and gonum/mat.Dense.
 // Supported scalars are:
 //  - bool,
 //  - (u)int{8,16,32,64},
@@ -19,9 +19,9 @@
 // Reading from a NumPy data file can be performed like so:
 //
 //  f, err := os.Open("data.npy")
-//  var m mat64.Dense
+//  var m mat.Dense
 //  err = npyio.Read(f, &m)
-//  fmt.Printf("data = %v\n", mat64.Formatted(&m, mat64.Prefix("       ")))
+//  fmt.Printf("data = %v\n", mat.Formatted(&m, mat.Prefix("       "))))
 //
 // npyio can also read data directly into slices, arrays or scalars, provided
 // the on-disk data type and the provided one match.
@@ -38,7 +38,7 @@
 // Writing into a NumPy data file can be done like so:
 //
 //  f, err := os.Create("data.npy")
-//  var m mat64.Dense = ...
+//  var m mat.Dense = ...
 //  err = npyio.Write(f, m)
 //
 // Scalars, arrays and slices are also supported:

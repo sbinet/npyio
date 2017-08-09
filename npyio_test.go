@@ -9,12 +9,12 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
 )
 
 func BenchmarkWriteDense(b *testing.B) {
 	data := make([]float64, 1000)
-	m := mat64.NewDense(100, 10, data)
+	m := mat.NewDense(100, 10, data)
 	w := ioutil.Discard
 	b.ResetTimer()
 
@@ -190,12 +190,12 @@ func (r *reader) reset() {
 
 func BenchmarkReadDense(b *testing.B) {
 	buf := new(bytes.Buffer)
-	_ = Write(buf, mat64.NewDense(100, 10, make([]float64, 1000)))
+	_ = Write(buf, mat.NewDense(100, 10, make([]float64, 1000)))
 	r := &reader{buf: buf.Bytes()}
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
-		var m mat64.Dense
+		var m mat.Dense
 		_ = Read(r, &m)
 		r.reset()
 	}

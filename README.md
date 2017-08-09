@@ -68,7 +68,7 @@ Consider a `.npy` file created with the following `python` code:
 >>> f.close()
 ```
 
-The (float64) data array can be loaded into a (float64) `mat64.Matrix` by the following code:
+The (float64) data array can be loaded into a (float64) `mat.Matrix` by the following code:
 
 ```go
 package main
@@ -78,8 +78,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/gonum/matrix/mat64"
 	"github.com/sbinet/npyio"
+	"gonum.org/v1/gonum/mat"
 )
 
 func main() {
@@ -103,8 +103,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	m := mat64.NewDense(shape[0], shape[1], raw)
-	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+	m := mat.NewDense(shape[0], shape[1], raw)
+	fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
 }
 ```
 

@@ -12,26 +12,26 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
 )
 
 func TestReaderDense(t *testing.T) {
-	want := map[string]map[bool]*mat64.Dense{
-		"2x3": map[bool]*mat64.Dense{
-			false: mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
-			true:  mat64.NewDense(2, 3, []float64{0, 2, 4, 1, 3, 5}), // col-major
+	want := map[string]map[bool]*mat.Dense{
+		"2x3": map[bool]*mat.Dense{
+			false: mat.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
+			true:  mat.NewDense(2, 3, []float64{0, 2, 4, 1, 3, 5}), // col-major
 		},
-		"6x1": map[bool]*mat64.Dense{
-			false: mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
-			true:  mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+		"6x1": map[bool]*mat.Dense{
+			false: mat.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+			true:  mat.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
 		},
-		"1x1": map[bool]*mat64.Dense{
-			false: mat64.NewDense(1, 1, []float64{42}),
-			true:  mat64.NewDense(1, 1, []float64{42}),
+		"1x1": map[bool]*mat.Dense{
+			false: mat.NewDense(1, 1, []float64{42}),
+			true:  mat.NewDense(1, 1, []float64{42}),
 		},
-		"scalar": map[bool]*mat64.Dense{
-			false: mat64.NewDense(1, 1, []float64{42}),
-			true:  mat64.NewDense(1, 1, []float64{42}),
+		"scalar": map[bool]*mat.Dense{
+			false: mat.NewDense(1, 1, []float64{42}),
+			true:  mat.NewDense(1, 1, []float64{42}),
 		},
 	}
 
@@ -53,14 +53,14 @@ func TestReaderDense(t *testing.T) {
 					t.Errorf("%v: error: %v\n", fname, err)
 				}
 
-				var m mat64.Dense
+				var m mat.Dense
 				err = r.Read(&m)
 				if err != nil {
 					t.Errorf("%v: error: %v\n", fname, err)
 				}
 
 				order := r.Header.Descr.Fortran
-				if !mat64.Equal(&m, want[shape][order]) {
+				if !mat.Equal(&m, want[shape][order]) {
 					t.Errorf("%v: error.\n got=%v\nwant=%v\n",
 						fname,
 						&m,
@@ -202,14 +202,14 @@ func TestReaderNDimSlice(t *testing.T) {
 }
 
 func TestReaderNaNsInf(t *testing.T) {
-	want := mat64.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
+	want := mat.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
 	f, err := os.Open("testdata/nans_inf.npy")
 	if err != nil {
 		t.Errorf("error: %v\n", err)
 	}
 	defer f.Close()
 
-	var m mat64.Dense
+	var m mat.Dense
 	err = Read(f, &m)
 	if err != nil {
 		t.Errorf("error reading data: %v\n", err)
@@ -228,14 +228,14 @@ func TestReaderNaNsInf(t *testing.T) {
 }
 
 func TestReaderNpz(t *testing.T) {
-	want := map[string]map[bool]*mat64.Dense{
-		"arr0.npy": map[bool]*mat64.Dense{
-			false: mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
-			true:  mat64.NewDense(2, 3, []float64{0, 2, 4, 1, 3, 5}), // col-major
+	want := map[string]map[bool]*mat.Dense{
+		"arr0.npy": map[bool]*mat.Dense{
+			false: mat.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5}), // row-major
+			true:  mat.NewDense(2, 3, []float64{0, 2, 4, 1, 3, 5}), // col-major
 		},
-		"arr1.npy": map[bool]*mat64.Dense{
-			false: mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
-			true:  mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+		"arr1.npy": map[bool]*mat.Dense{
+			false: mat.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
+			true:  mat.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5}),
 		},
 	}
 
@@ -263,7 +263,7 @@ func TestReaderNpz(t *testing.T) {
 				continue
 			}
 
-			var m mat64.Dense
+			var m mat.Dense
 			err = r.Read(&m)
 			if err != nil {
 				t.Errorf("%s: error reading %s data: %v\n", fname, zip.Name, err)
@@ -271,7 +271,7 @@ func TestReaderNpz(t *testing.T) {
 			}
 
 			corder := r.Header.Descr.Fortran
-			if !mat64.Equal(&m, want[zip.Name][corder]) {
+			if !mat.Equal(&m, want[zip.Name][corder]) {
 				t.Errorf("%s: error comparing %s.\n got=%v\nwant=%v\n",
 					fname,
 					zip.Name,

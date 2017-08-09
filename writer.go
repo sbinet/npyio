@@ -15,11 +15,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
 )
 
 var (
-	rtDense = reflect.TypeOf((*mat64.Dense)(nil)).Elem()
+	rtDense = reflect.TypeOf((*mat.Dense)(nil)).Elem()
 )
 
 // Write writes 'val' into 'w' in the NumPy data format.
@@ -27,7 +27,7 @@ var (
 //  - if val is a scalar, it must be of a supported type (bools, (u)ints, floats and complexes)
 //  - if val is a slice or array, it must be a slice/array of a supported type.
 //    the shape (len,) will be written out.
-//  - if val is a mat64.Dense, the correct shape will be transmitted. (ie: (nrows, ncols))
+//  - if val is a mat.Dense, the correct shape will be transmitted. (ie: (nrows, ncols))
 //
 // The data-array will always be written out in C-order (row-major).
 func Write(w io.Writer, val interface{}) error {
@@ -124,7 +124,7 @@ func writeHeader(w io.Writer, hdr Header, dt dType) error {
 func writeData(w io.Writer, rv reflect.Value, dt dType) error {
 	rt := rv.Type()
 	if rt == rtDense {
-		m := rv.Interface().(mat64.Dense)
+		m := rv.Interface().(mat.Dense)
 		nrows, ncols := m.Dims()
 		var buf [8]byte
 		for i := 0; i < nrows; i++ {
@@ -509,7 +509,7 @@ func dtypeFrom(rv reflect.Value, rt reflect.Type) (string, error) {
 }
 
 func shapeFrom(rv reflect.Value) ([]int, error) {
-	if m, ok := rv.Interface().(mat64.Dense); ok {
+	if m, ok := rv.Interface().(mat.Dense); ok {
 		nrows, ncols := m.Dims()
 		return []int{nrows, ncols}, nil
 	}

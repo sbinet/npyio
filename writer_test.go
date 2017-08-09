@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
 )
 
 func TestWriter(t *testing.T) {
@@ -18,10 +18,10 @@ func TestWriter(t *testing.T) {
 		name string
 		want interface{}
 	}{
-		{"dense_2x3", mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})},
-		{"dense_6x1", mat64.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5})},
-		{"dense_1x6", mat64.NewDense(1, 6, []float64{0, 1, 2, 3, 4, 5})},
-		{"dense_1x1", mat64.NewDense(1, 1, []float64{42})},
+		{"dense_2x3", mat.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})},
+		{"dense_6x1", mat.NewDense(6, 1, []float64{0, 1, 2, 3, 4, 5})},
+		{"dense_1x6", mat.NewDense(1, 6, []float64{0, 1, 2, 3, 4, 5})},
+		{"dense_1x1", mat.NewDense(1, 1, []float64{42})},
 
 		// scalars
 		{"bool-true", true},
@@ -90,7 +90,7 @@ func TestWriter(t *testing.T) {
 }
 
 func TestWriterNaNsInf(t *testing.T) {
-	want := mat64.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
+	want := mat.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
 
 	buf := new(bytes.Buffer)
 	err := Write(buf, want)
@@ -98,7 +98,7 @@ func TestWriterNaNsInf(t *testing.T) {
 		t.Errorf("error writing data: %v\n", err)
 	}
 
-	var m mat64.Dense
+	var m mat.Dense
 	err = Read(buf, &m)
 	if err != nil {
 		t.Errorf("error reading data: %v\n", err)

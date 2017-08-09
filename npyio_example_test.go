@@ -9,14 +9,15 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/gonum/matrix/mat64"
+	"gonum.org/v1/gonum/mat"
+
 	"github.com/sbinet/npyio"
 )
 
 func ExampleWrite() {
-	m := mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
+	m := mat.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
 	fmt.Printf("-- original data --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
 	buf := new(bytes.Buffer)
 
 	err := npyio.Write(buf, m)
@@ -27,17 +28,17 @@ func ExampleWrite() {
 	// modify original data
 	m.Set(0, 0, 6)
 
-	var data mat64.Dense
+	var data mat.Dense
 	err = npyio.Read(buf, &data)
 	if err != nil {
 		log.Fatalf("error reading data: %v\n", err)
 	}
 
 	fmt.Printf("-- data read back --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(&data, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(&data, mat.Prefix("       ")))
 
 	fmt.Printf("-- modified original data --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
 
 	// Output:
 	// -- original data --
@@ -52,9 +53,9 @@ func ExampleWrite() {
 }
 
 func ExampleRead() {
-	m := mat64.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
+	m := mat.NewDense(2, 3, []float64{0, 1, 2, 3, 4, 5})
 	fmt.Printf("-- original data --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
 	buf := new(bytes.Buffer)
 
 	err := npyio.Write(buf, m)
@@ -65,17 +66,17 @@ func ExampleRead() {
 	// modify original data
 	m.Set(0, 0, 6)
 
-	var data mat64.Dense
+	var data mat.Dense
 	err = npyio.Read(buf, &data)
 	if err != nil {
 		log.Fatalf("error reading data: %v\n", err)
 	}
 
 	fmt.Printf("-- data read back --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(&data, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(&data, mat.Prefix("       ")))
 
 	fmt.Printf("-- modified original data --\n")
-	fmt.Printf("data = %v\n", mat64.Formatted(m, mat64.Prefix("       ")))
+	fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
 
 	// Output:
 	// -- original data --

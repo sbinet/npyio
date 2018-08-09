@@ -238,9 +238,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != boolType {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]bool, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]bool, n)
 		var buf [1]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -272,9 +273,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != int8Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]int8, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]int8, n)
 		var buf [1]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -301,9 +303,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != int16Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]int16, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]int16, n)
 		var buf [2]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -330,9 +333,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != int32Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]int32, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]int32, n)
 		var buf [4]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -359,9 +363,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != int64Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]int64, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]int64, n)
 		var buf [8]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -389,8 +394,9 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
-		*vptr = make([]uint8, nelems)
-		for i := 0; i < nelems; i++ {
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]uint8, n)
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -417,9 +423,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != uint16Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]uint16, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]uint16, n)
 		var buf [2]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -446,9 +453,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != uint32Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]uint32, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]uint32, n)
 		var buf [4]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -475,9 +483,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != uint64Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]uint64, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]uint64, n)
 		var buf [8]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -504,9 +513,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != float32Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]float32, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]float32, n)
 		var buf [4]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -533,9 +543,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != float64Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]float64, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]float64, n)
 		var buf [8]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -564,9 +575,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != complex64Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]complex64, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]complex64, n)
 		var buf [8]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -597,9 +609,10 @@ func (r *Reader) Read(ptr interface{}) error {
 		if dt.rt != complex128Type {
 			return ErrTypeMismatch
 		}
-		*vptr = make([]complex128, nelems)
+		n := bufferSize(len(*vptr), nelems)
+		*vptr = make([]complex128, n)
 		var buf [16]byte
-		for i := 0; i < nelems; i++ {
+		for i := 0; i < n; i++ {
 			_, err := r.r.Read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
@@ -804,4 +817,21 @@ func stringLen(dtype string) (int, error) {
 		return int(v), nil
 	}
 	return 0, fmt.Errorf("npyio: %q is not a string-like dtype", dtype)
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func bufferSize(l, m int) int {
+	var n int
+	if l != 0 {
+		n = min(l, m)
+	} else {
+		n = m
+	}
+	return n
 }

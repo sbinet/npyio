@@ -1,4 +1,10 @@
-# npyio [![GoDoc](https://godoc.org/github.com/sbinet/npyio?status.svg)](https://godoc.org/github.com/sbinet/npyio)
+# npyio
+
+[![Build Status](https://travis-ci.org/sbinet/npyio.svg?branch=master)](https://travis-ci.org/sbinet/npyio)
+[![codecov](https://codecov.io/gh/sbinet/npyio/branch/master/graph/badge.svg)](https://codecov.io/gh/sbinet/npyio)
+[![Go Report Card](https://goreportcard.com/badge/github.com/sbinet/npyio)](https://goreportcard.com/report/github.com/sbinet/npyio)
+[![License](https://img.shields.io/badge/License-BSD--3-blue.svg)](https://github.com/sbinet/npyio/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/sbinet/npyio?status.svg)](https://godoc.org/github.com/sbinet/npyio)
 
 `npyio` provides read/write access to [numpy data files](http://docs.scipy.org/doc/numpy/neps/npy-format.html).
 

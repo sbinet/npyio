@@ -135,9 +135,9 @@ func ExamplePartialRead() {
 
 	// Output:
 	// -- original data --
-	// data = 0 1 2 3 4 5
+	// data = [0 1 2 3 4 5]
 	// -- partial data read back --
-	// data = 0 1 2
+	// data = [0 1 2]
 	// -- rest of data read back --
-	// data = 3 4 5
+	// data = [3 4 5]
 }

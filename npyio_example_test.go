@@ -8,6 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"log"
+	"os"
 
 	"gonum.org/v1/gonum/mat"
 
@@ -88,4 +89,59 @@ func ExampleRead() {
 	// -- modified original data --
 	// data = ⎡6  1  2⎤
 	//        ⎣3  4  5⎦
+}
+
+func ExamplePartialRead() {
+	out, err := os.Create("data.npy")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer out.Close()
+
+	f := []float64{0, 1, 2, 3, 4, 5}
+	fmt.Printf("-- original data --\n")
+	fmt.Printf("data = %v\n", f)
+	err = npyio.Write(out, f)
+	if err != nil {
+		log.Fatalf("error writing data: %v\n", err)
+	}
+	err = out.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	in, err := os.Open("data.npy")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer in.Close()
+	r, err := npyio.NewReader(in)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	data := make([]float64, 3)
+	err = r.Read(&data)
+	if err != nil {
+		log.Fatalf("error reading data: %v\n", err)
+	}
+
+	fmt.Printf("-- partial data read back --\n")
+	fmt.Printf("data = %v\n", data)
+
+	err = r.Read(&data)
+	if err != nil {
+		log.Fatalf("error reading data: %v\n", err)
+	}
+
+	fmt.Printf("-- rest of data read back --\n")
+	fmt.Printf("data = %v\n", data)
+
+	// Output:
+	// -- original data --
+	// data = [0 1 2 3 4 5]
+	// -- partial data read back --
+	// data = [0 1 2]
+	// -- rest of data read back --
+	// data = [3 4 5]
 }

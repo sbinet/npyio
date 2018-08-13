@@ -173,6 +173,27 @@ func TestReaderSlice(t *testing.T) {
 						want[dt][shape],
 					)
 				}
+				if wslice := want[dt][shape]; reflect.ValueOf(wslice).Len() > 1 {
+					if _, err := f.Seek(0, 0); err != nil {
+						t.Errorf("%v: error: %v\n", fname, err)
+					}
+					r.readHeader()
+					const psize = 3
+					pslice := reflect.MakeSlice(reflect.SliceOf(rt), psize, psize)
+					data = reflect.New(pslice.Type())
+					data.Elem().Set(pslice)
+					err = r.Read(data.Interface())
+					if err != nil {
+						t.Errorf("%v: error: %v\n", fname, err)
+					}
+					if pwant := reflect.ValueOf(wslice).Slice(0, 3); !reflect.DeepEqual(pslice.Interface(), pwant.Interface()) {
+						t.Errorf("%v: error.\n got=%v\nwant=%v\n",
+							fname,
+							pslice,
+							pwant,
+						)
+					}
+				}
 			}
 		}
 	}

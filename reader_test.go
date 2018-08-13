@@ -186,7 +186,7 @@ func TestReaderSlice(t *testing.T) {
 					if err != nil {
 						t.Errorf("%v: error: %v\n", fname, err)
 					}
-					if pwant := reflect.ValueOf(wslice).Slice(0, 3); !sliceDeepEqual(pslice, pwant) {
+					if pwant := reflect.ValueOf(wslice).Slice(0, 3); !reflect.DeepEqual(pslice.Interface(), pwant.Interface()) {
 						t.Errorf("%v: error.\n got=%v\nwant=%v\n",
 							fname,
 							pslice,
@@ -414,18 +414,4 @@ func TestStringLenDtype(t *testing.T) {
 			continue
 		}
 	}
-}
-
-func sliceDeepEqual(r, s reflect.Value) bool {
-	if (r.Type() != s.Type()) || (r.Kind() != s.Kind()) || (r.Len() != s.Len()) {
-		return false
-	}
-	n := r.Len()
-	for i := 0; i < n; i++ {
-		u, v := r.Index(i), s.Index(i)
-		if (u.Kind() != v.Kind()) || (u.Type() != v.Type()) || (u.String() != v.String()) {
-			return false
-		}
-	}
-	return true
 }

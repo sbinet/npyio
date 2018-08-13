@@ -96,6 +96,7 @@ func ExamplePartialRead() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer out.Close()
 
 	f := []float64{0, 1, 2, 3, 4, 5}
 	fmt.Printf("-- original data --\n")
@@ -104,7 +105,10 @@ func ExamplePartialRead() {
 	if err != nil {
 		log.Fatalf("error writing data: %v\n", err)
 	}
-	out.Close()
+	err = out.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	in, err := os.Open("data.npy")
 	if err != nil {

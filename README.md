@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/License-BSD--3-blue.svg)](https://github.com/sbinet/npyio/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/sbinet/npyio?status.svg)](https://godoc.org/github.com/sbinet/npyio)
 
-`npyio` provides read/write access to [numpy data files](http://docs.scipy.org/doc/numpy/neps/npy-format.html).
+`npyio` provides read/write access to [numpy data files](https://numpy.org/neps/nep-0001-npy-format.html).
 
 ## Installation
 

@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package npyio provides read/write access to files following the NumPy data file format:
-//  https://docs.scipy.org/doc/numpy/neps/npy-format.html
+//  https://numpy.org/neps/nep-0001-npy-format.html
 //
 // Supported types
 //
@@ -81,7 +81,7 @@ var (
 	ErrInvalidType = errors.New("npyio: invalid or unsupported type")
 
 	// Magic header present at the start of a NumPy data file format.
-	// See http://docs.scipy.org/doc/numpy-1.10.1/neps/npy-format.html
+	// See https://numpy.org/neps/nep-0001-npy-format.html
 	Magic = [6]byte{'\x93', 'N', 'U', 'M', 'P', 'Y'}
 )
 

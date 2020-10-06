@@ -1,0 +1,4 @@
+================================================================================
+file: testdata/data_float32_2x3_corder.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f4, Fortran:false, Shape:[2 3]}}
+data = [0 1 2 3 4 5]

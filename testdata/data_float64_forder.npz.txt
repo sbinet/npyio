@@ -1,0 +1,9 @@
+================================================================================
+file: testdata/data_float64_forder.npz
+entry: arr1.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:true, Shape:[6 1]}}
+data = [0 1 2 3 4 5]
+
+entry: arr0.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:true, Shape:[2 3]}}
+data = [0 1 2 3 4 5]

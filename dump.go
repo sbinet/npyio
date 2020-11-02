@@ -37,33 +37,6 @@ func Dump(o io.Writer, r io.ReaderAt) error {
 		return fmt.Errorf("npyio: could not infer format: %w", err)
 	}
 
-	sizeof := func(r io.ReaderAt) (int64, error) {
-		switch r := r.(type) {
-		case interface{ Stat() (os.FileInfo, error) }:
-			fi, err := r.Stat()
-			if err != nil {
-				return 0, err
-			}
-			return fi.Size(), nil
-		case io.Seeker:
-			pos, err := r.Seek(0, io.SeekCurrent)
-			if err != nil {
-				return 0, err
-			}
-			sz, err := r.Seek(0, io.SeekEnd)
-			if err != nil {
-				return 0, err
-			}
-			_, err = r.Seek(pos, io.SeekStart)
-			if err != nil {
-				return 0, err
-			}
-			return sz, nil
-		default:
-			return 0, fmt.Errorf("npyio: unsupported reader: %T", r)
-		}
-	}
-
 	sz, err := sizeof(r)
 	if err != nil {
 		return fmt.Errorf("npyio: could not infer file size: %w", err)
@@ -136,4 +109,60 @@ func display(o io.Writer, f io.Reader, fname string) error {
 	}
 	fmt.Fprintf(o, "data = %v\n", rv.Elem().Interface())
 	return nil
+}
+
+func sizeof(r io.ReaderAt) (int64, error) {
+	switch r := r.(type) {
+	case interface{ Stat() (os.FileInfo, error) }:
+		fi, err := r.Stat()
+		if err != nil {
+			return 0, err
+		}
+		return fi.Size(), nil
+	case io.Seeker:
+		pos, err := r.Seek(0, io.SeekCurrent)
+		if err != nil {
+			return 0, err
+		}
+		sz, err := r.Seek(0, io.SeekEnd)
+		if err != nil {
+			return 0, err
+		}
+		_, err = r.Seek(pos, io.SeekStart)
+		if err != nil {
+			return 0, err
+		}
+		return sz, nil
+	default:
+		return 0, fmt.Errorf("npyio: unsupported  reader: %T", r)
+	}
+}
+
+func UnzipNpz(r io.ReaderAt) ([]*zip.File, error) {
+	var (
+		err      error
+		zipMagic = [4]byte{'P', 'K', 3, 4}
+	)
+
+	// detect .npz files (check if we find a ZIP file magic header)
+	var hdr [6]byte
+	_, err = r.ReadAt(hdr[:], 0)
+	if err != nil {
+		return nil, fmt.Errorf("npyio: could not infer format: %w", err)
+	}
+
+	sz, err := sizeof(r)
+	if err != nil {
+		return nil, fmt.Errorf("npyio: could not infer file size: %w", err)
+	}
+
+	if bytes.Equal(zipMagic[:], hdr[:len(zipMagic)]) {
+		zr, err := zip.NewReader(r, sz)
+		if err != nil {
+			return nil, fmt.Errorf("npyio: could not create zip file reader: %w", err)
+		}
+		return zr.File, nil
+	}
+
+	return nil, fmt.Errorf("npyio: unknown magic header %q", string(hdr[:]))
 }

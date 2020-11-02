@@ -189,3 +189,50 @@ func main() {
 	}
 }
 ```
+
+### Reading a .npz file 
+
+```go
+package main
+
+import (
+    "log"
+    "os"
+    "fmt"
+
+    "github.com/sbinet/npyio"
+    "gonum.org/v1/gonum/mat"
+)
+
+func main() {
+    f, err := os.Open(os.Args[1])
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer f.Close()
+    files,err:= npyio.UnzipNpz(f)
+    if err != nil {
+        log.Fatal(err)
+    }
+    for _, file := range files {
+        npyFile,err:= file.Open()
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer npyFile.Close()
+        r, err := npyio.NewReader(npyFile)
+        if err != nil {
+            log.Fatal(err)
+        }
+        shape := r.Header.Descr.Shape
+        raw := make([]float64, shape[0]*shape[1])
+        err = r.Read(&raw)
+        if err != nil {
+            log.Fatal(err)
+        }
+        m := mat.NewDense(shape[0], shape[1], raw)
+        fmt.Printf("file = %s ", file.Name)
+        fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
+    }
+}
+```

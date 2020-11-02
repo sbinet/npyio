@@ -138,6 +138,9 @@ func sizeof(r io.ReaderAt) (int64, error) {
 	}
 }
 
+// UnzipNpz unzip numpy npz file , return the npy file list
+//for further reading npy files.
+//user need to call close on  each of the zip.Files
 func UnzipNpz(r io.ReaderAt) ([]*zip.File, error) {
 	var (
 		err      error

@@ -8,6 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"reflect"
 	"strings"
 	"testing"
 )
@@ -187,7 +188,7 @@ func TestUnzipNpz(t *testing.T) {
 				if err != nil {
 					t.Fatalf("could not read %q: %+v", file.Name, err)
 				}
-				if got, want := raw, tc.wantData[i]; !equal(got, want) {
+				if got, want := raw, tc.wantData[i]; !reflect.DeepEqual(got, want) {
 					t.Fatalf(
 						"data  mismatch in file %s :\ngot:\n%v\nwant:\n%v\n", file.Name,
 						got, want,
@@ -196,23 +197,4 @@ func TestUnzipNpz(t *testing.T) {
 			}
 		})
 	}
-}
-
-func equal(a, b []float64) bool {
-
-	// If one is nil, the other must also be nil.
-	if (a == nil) != (b == nil) {
-		return false
-	}
-
-	if len(a) != len(b) {
-		return false
-	}
-
-	for i := range a {
-		if a[i] != b[i] {
-			return false
-		}
-	}
-	return true
 }

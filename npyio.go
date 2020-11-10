@@ -142,29 +142,6 @@ type dType struct {
 	rt    reflect.Type
 }
 
-//GetType  get data type from numpy header and transform to golang type
-//for a file than data type is  unknown before reading ,call GetType
-//
-// Example:
-//  r = npyio.NewReadr(f)
-//  rtType, err = r.Header.GetType()
-//   //handle err
-//	if rtType.Kind()==reflect.Float64 {
-//		var data []float64
-//    err = r.Read(&data)
-//	}else if rtType.Kind()==reflect.Uint64 {
-//		var data []uint64
-//    err = r.Read(&data)
-//	}
-//
-func (h Header) GetType() (reflect.Type, error) {
-	t, err := newDtype(h.Descr.Type)
-	if err != nil {
-		return nil, err
-	}
-	return t.rt, nil
-}
-
 func newDtype(str string) (dType, error) {
 	var (
 		err error

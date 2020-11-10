@@ -190,7 +190,7 @@ func main() {
 }
 ```
 
-### Reading a .npz file 
+### loading  a .npz or npy file 
 
 ```go
 package main
@@ -210,29 +210,49 @@ func main() {
         log.Fatal(err)
     }
     defer f.Close()
-    files,err:= npyio.UnzipNpz(f)
+    npzData,npyData,err:= npyio.Load(f)
     if err != nil {
         log.Fatal(err)
     }
-    for _, file := range files {
-        npyFile,err:= file.Open()
-        if err != nil {
-            log.Fatal(err)
-        }
-        defer npyFile.Close()
-        r, err := npyio.NewReader(npyFile)
-        if err != nil {
-            log.Fatal(err)
-        }
-        shape := r.Header.Descr.Shape
-        raw := make([]float64, shape[0]*shape[1])
-        err = r.Read(&raw)
-        if err != nil {
-            log.Fatal(err)
-        }
-        m := mat.NewDense(shape[0], shape[1], raw)
-        fmt.Printf("file = %s ", file.Name)
-        fmt.Printf("data = %v\n", mat.Formatted(m, mat.Prefix("       ")))
+    if npyData!=nil {
+        //npy file
+        fmt.Printf("data = %v\n", npyData.Value)
+        return
+    }
+    for fileName, data := range npzData {
+        fmt.Printf("file = %s ", fileName)
+        fmt.Printf("data = %v\n", data.Value)
+    }
+}
+```
+
+### saving   data to  .npz file 
+
+```go
+package main
+
+import (
+    "log"
+    "os"
+    "fmt"
+
+    "github.com/sbinet/npyio"
+    "gonum.org/v1/gonum/mat"
+)
+
+func main() {
+    f, err := os.Open(os.Args[1])
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer f.Close()
+    data := make(map[string]interface{})
+    data["a"] = []float64{1,2,3,4,5,6}
+    data["b"] = []float32{3,4,5,6,7}
+    data["c"] = mat.NewDense(3,2,[]float64{1,3,5,7,9,11})
+    err = npyio.SaveNPZ(f,data)
+    if err != nil {
+        log.Fatal(err)
     }
 }
 ```

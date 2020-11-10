@@ -5,10 +5,10 @@
 package npyio
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
-	"reflect"
 	"strings"
 	"testing"
 )
@@ -56,7 +56,6 @@ func TestDump(t *testing.T) {
 			if err != nil {
 				t.Fatalf("could not read reference file %q: %+v", tc.want, err)
 			}
-
 			if got, want := o.String(), string(want); got != want {
 				t.Fatalf(
 					"invalid dump:\ngot:\n%s\nwant:\n%s\n",
@@ -65,6 +64,39 @@ func TestDump(t *testing.T) {
 			}
 		})
 	}
+}
+
+func diffdata(a string, b string) (str string) {
+	str = fmt.Sprintf(" alen %d blen %d", len(a), len(b))
+	if len(a) < len(b) {
+		var m int
+		for i := range a {
+			if a[i] != b[i] {
+				str += fmt.Sprintf(" diff big   %d %d %d %s %s ", i, a[i], b[i], a[i:], b[i:])
+				m = i
+				break
+			}
+		}
+		str += fmt.Sprintf("i len %d %d", m, len(b))
+		for j := m; j < len(b); j++ {
+			str += fmt.Sprintf("%3d _0_ ", byte(b[j]))
+		}
+	} else {
+		var m int
+		for i := range b {
+			if a[i] != b[i] {
+				str += fmt.Sprintf(" diff  smal %d  %d %d %s %s", i, a[i], b[i], a[i:], b[i:])
+				break
+				m = i
+			}
+		}
+		str += fmt.Sprintf("i len %d %d", m, len(a))
+		for j := m; j < len(a); j++ {
+			str += fmt.Sprintf("%3d  _0_ ", byte(a[j]))
+		}
+	}
+	return str
+
 }
 
 func TestDumpSeeker(t *testing.T) {
@@ -127,73 +159,6 @@ func TestDumpSeeker(t *testing.T) {
 					"invalid dump:\ngot:\n%s\nwant:\n%s\n",
 					got, want,
 				)
-			}
-		})
-	}
-}
-
-func TestUnzipNpz(t *testing.T) {
-	for _, tc := range []struct {
-		name         string
-		wantFileName []string
-		wantShape    [][2]int
-		wantData     [][]float64
-	}{
-		{
-			name:         "testdata/data_float64_corder.npz",
-			wantFileName: []string{"arr1.npy", "arr0.npy"},
-			wantShape: [][2]int{
-				{6, 1}, {2, 3},
-			},
-			wantData: [][]float64{
-				{0, 1, 2, 3, 4, 5}, {0, 1, 2, 3, 4, 5},
-			},
-		},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			f, err := os.Open(tc.name)
-			if err != nil {
-				t.Fatalf("could not open %q: %+v", tc.name, err)
-			}
-			defer f.Close()
-			files, err := UnzipNpz(f)
-			if err != nil {
-				t.Fatalf("could not unzip %q: %+v", tc.name, err)
-			}
-			for i, file := range files {
-				if got, want := file.Name, tc.wantFileName[i]; got != want {
-					t.Fatalf(
-						"filename mismatch:\ngot:\n%s\nwant:\n%s\n",
-						got, want,
-					)
-				}
-				r, err := file.Open()
-				if err != nil {
-					t.Fatalf("could not open %q: %+v", file.Name, err)
-				}
-				defer r.Close()
-				npyReader, err := NewReader(r)
-				if err != nil {
-					t.Fatalf("could not read %v: %+v", file.Name, err)
-				}
-				if got, want := npyReader.Header.Descr.Shape, tc.wantShape[i]; len(got) != 2 || got[0] != want[0] || got[1] != want[1] {
-					t.Fatalf(
-						"shape  mismatch in file %s :\ngot:\n%v\nwant:\n%v\n", file.Name,
-						got, want,
-					)
-				}
-				length := npyReader.Header.Descr.Shape[0] * npyReader.Header.Descr.Shape[1]
-				var raw = make([]float64, length)
-				err = npyReader.Read(&raw)
-				if err != nil {
-					t.Fatalf("could not read %q: %+v", file.Name, err)
-				}
-				if got, want := raw, tc.wantData[i]; !reflect.DeepEqual(got, want) {
-					t.Fatalf(
-						"data  mismatch in file %s :\ngot:\n%v\nwant:\n%v\n", file.Name,
-						got, want,
-					)
-				}
 			}
 		})
 	}

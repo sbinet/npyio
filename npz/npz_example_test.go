@@ -58,6 +58,10 @@ func ExampleReader() {
 	}
 
 	r, err := npz.NewReader(f, stat.Size())
+	if err != nil {
+		log.Fatalf("could not open npz archive: %+v", err)
+	}
+
 	for _, name := range r.Keys() {
 		fmt.Printf("%s: %v\n", name, r.Header(name))
 	}

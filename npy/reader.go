@@ -818,14 +818,6 @@ var (
 	reUniPost = regexp.MustCompile(`^[<|>]*?U(\d.*)$`)
 )
 
-func mustStringLen(dtype string) int {
-	v, err := stringLen(dtype)
-	if err != nil {
-		panic(err)
-	}
-	return v
-}
-
 func stringLen(dtype string) (int, error) {
 	if m := reStrPre.FindStringSubmatch(dtype); m != nil {
 		v, err := strconv.Atoi(m[1])

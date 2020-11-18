@@ -91,7 +91,7 @@ func ExampleRead() {
 	//        ⎣3  4  5⎦
 }
 
-func ExamplePartialRead() {
+func Example_partialRead() {
 	out, err := os.Create("data.npy")
 	if err != nil {
 		log.Fatal(err)

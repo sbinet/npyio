@@ -76,7 +76,7 @@ func writeHeader(w io.Writer, hdr Header, dt dType) error {
 		hdr.Descr.Type,
 		shapeString(hdr.Descr.Shape),
 	)
-	var hdrSize = 0
+	var hdrSize int
 	switch hdr.Major {
 	case 1:
 		hdrSize = 4 + len(Magic)

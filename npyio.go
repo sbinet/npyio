@@ -54,195 +54,71 @@
 package npyio
 
 import (
-	"encoding/binary"
-	"errors"
-	"fmt"
+	"io"
 	"reflect"
+
+	"github.com/sbinet/npyio/npy"
 )
 
 var (
-	errNilPtr = errors.New("npyio: nil pointer")
-	errNotPtr = errors.New("npyio: expected a pointer to a value")
-	errDims   = errors.New("npyio: invalid dimensions")
-	errNoConv = errors.New("npyio: no legal type conversion")
-
 	// ErrInvalidNumPyFormat is the error returned by NewReader when
 	// the underlying io.Reader is not a valid or recognized NumPy data
 	// file format.
-	ErrInvalidNumPyFormat = errors.New("npyio: not a valid NumPy file format")
+	ErrInvalidNumPyFormat = npy.ErrInvalidNumPyFormat
 
 	// ErrTypeMismatch is the error returned by Reader when the on-disk
 	// data type and the user provided one do NOT match.
-	ErrTypeMismatch = errors.New("npyio: types don't match")
+	ErrTypeMismatch = npy.ErrTypeMismatch
 
 	// ErrInvalidType is the error returned by Reader and Writer when
 	// confronted with a type that is not supported or can not be
 	// reliably (de)serialized.
-	ErrInvalidType = errors.New("npyio: invalid or unsupported type")
+	ErrInvalidType = npy.ErrInvalidType
 
 	// Magic header present at the start of a NumPy data file format.
 	// See https://numpy.org/neps/nep-0001-npy-format.html
-	Magic = [6]byte{'\x93', 'N', 'U', 'M', 'P', 'Y'}
+	Magic = npy.Magic
 )
 
 // Header describes the data content of a NumPy data file.
-type Header struct {
-	Major byte // data file major version
-	Minor byte // data file minor version
-	Descr struct {
-		Type    string // data type of array elements ('<i8', '<f4', ...)
-		Fortran bool   // whether the array data is stored in Fortran-order (col-major)
-		Shape   []int  // array shape (e.g. [2,3] a 2-rows, 3-cols array
-	}
+type Header = npy.Header
+
+// Reader reads data from a NumPy data file.
+type Reader = npy.Reader
+
+// NewReader creates a new NumPy data file format reader.
+func NewReader(r io.Reader) (*Reader, error) {
+	return npy.NewReader(r)
 }
 
-// newHeader creates a new Header with the major/minor version numbers that npyio currently supports.
-func newHeader() Header {
-	return Header{
-		Major: 2,
-		Minor: 0,
-	}
+// Read reads the data from the r NumPy data file io.Reader, into the
+// provided pointed at value ptr.
+// Read returns an error if the on-disk data type and the one provided
+// don't match.
+//
+// If a *mat.Dense matrix is passed to Read, the numpy-array data is loaded
+// into the Dense matrix, honouring Fortran/C-order and dimensions/shape
+// parameters.
+//
+// Only numpy-arrays with up to 2 dimensions are supported.
+// Only numpy-arrays with elements convertible to float64 are supported.
+func Read(r io.Reader, ptr interface{}) error {
+	return npy.Read(r, ptr)
 }
 
-func (h Header) String() string {
-	return fmt.Sprintf("Header{Major:%v, Minor:%v, Descr:{Type:%v, Fortran:%v, Shape:%v}}",
-		int(h.Major),
-		int(h.Minor),
-		h.Descr.Type,
-		h.Descr.Fortran,
-		h.Descr.Shape,
-	)
+// TypeFrom returns the reflect.Type corresponding to the numpy-dtype string, if any.
+func TypeFrom(dtype string) reflect.Type {
+	return npy.TypeFrom(dtype)
 }
 
-var (
-	boolType       = reflect.TypeOf(true)
-	uint8Type      = reflect.TypeOf((*uint8)(nil)).Elem()
-	uint16Type     = reflect.TypeOf((*uint16)(nil)).Elem()
-	uint32Type     = reflect.TypeOf((*uint32)(nil)).Elem()
-	uint64Type     = reflect.TypeOf((*uint64)(nil)).Elem()
-	int8Type       = reflect.TypeOf((*int8)(nil)).Elem()
-	int16Type      = reflect.TypeOf((*int16)(nil)).Elem()
-	int32Type      = reflect.TypeOf((*int32)(nil)).Elem()
-	int64Type      = reflect.TypeOf((*int64)(nil)).Elem()
-	float32Type    = reflect.TypeOf((*float32)(nil)).Elem()
-	float64Type    = reflect.TypeOf((*float64)(nil)).Elem()
-	complex64Type  = reflect.TypeOf((*complex64)(nil)).Elem()
-	complex128Type = reflect.TypeOf((*complex128)(nil)).Elem()
-	stringType     = reflect.TypeOf((*string)(nil)).Elem()
-
-	trueUint8  = []byte{1}
-	falseUint8 = []byte{0}
-)
-
-type dType struct {
-	str   string
-	utf   bool
-	size  int
-	order binary.ByteOrder
-	rt    reflect.Type
-}
-
-func newDtype(str string) (dType, error) {
-	var (
-		err error
-		dt  = dType{
-			str:   str,
-			order: nativeEndian,
-		}
-	)
-	switch str {
-	case "b1", "<b1", "|b1", "bool":
-		dt.rt = boolType
-		dt.size = 1
-
-	case "u1", "<u1", "|u1", "uint8":
-		dt.rt = uint8Type
-		dt.size = 1
-
-	case "u2", "<u2", "|u2", ">u2", "uint16":
-		dt.rt = uint16Type
-		dt.size = 2
-
-	case "u4", "<u4", "|u4", ">u4", "uint32":
-		dt.rt = uint32Type
-		dt.size = 4
-
-	case "u8", "<u8", "|u8", ">u8", "uint64":
-		dt.rt = uint64Type
-		dt.size = 8
-
-	case "i1", "<i1", "|i1", ">i1", "int8":
-		dt.rt = int8Type
-		dt.size = 1
-
-	case "i2", "<i2", "|i2", ">i2", "int16":
-		dt.rt = int16Type
-		dt.size = 2
-
-	case "i4", "<i4", "|i4", ">i4", "int32":
-		dt.rt = int32Type
-		dt.size = 4
-
-	case "i8", "<i8", "|i8", ">i8", "int64":
-		dt.rt = int64Type
-		dt.size = 8
-
-	case "f4", "<f4", "|f4", ">f4", "float32":
-		dt.rt = float32Type
-		dt.size = 4
-
-	case "f8", "<f8", "|f8", ">f8", "float64":
-		dt.rt = float64Type
-		dt.size = 8
-
-	case "c8", "<c8", "|c8", ">c8", "complex64":
-		dt.rt = complex64Type
-		dt.size = 8
-
-	case "c16", "<c16", "|c16", ">c16", "complex128":
-		dt.rt = complex128Type
-		dt.size = 16
-	}
-
-	switch {
-	case reStrPre.MatchString(str), reStrPost.MatchString(str):
-		dt.rt = stringType
-		dt.size, err = stringLen(str)
-		if err != nil {
-			return dt, err
-		}
-
-	case reUniPre.MatchString(str), reUniPost.MatchString(str):
-		dt.rt = stringType
-		dt.utf = true
-		dt.size, err = stringLen(str)
-		if err != nil {
-			return dt, err
-		}
-	}
-	if dt.rt == nil {
-		return dt, fmt.Errorf("npyio: no reflect.Type for dtype=%v", str)
-	}
-
-	switch dt.str[0] {
-	case '<':
-		dt.order = binary.LittleEndian
-	case '>':
-		dt.order = binary.BigEndian
-	default:
-		dt.order = nativeEndian
-	}
-	return dt, nil
-}
-
-var nativeEndian binary.ByteOrder
-
-func init() {
-	v := uint16(1)
-	switch byte(v >> 8) {
-	case 0:
-		nativeEndian = binary.LittleEndian
-	case 1:
-		nativeEndian = binary.BigEndian
-	}
+// Write writes 'val' into 'w' in the NumPy data format.
+//
+//  - if val is a scalar, it must be of a supported type (bools, (u)ints, floats and complexes)
+//  - if val is a slice or array, it must be a slice/array of a supported type.
+//    the shape (len,) will be written out.
+//  - if val is a mat.Dense, the correct shape will be transmitted. (ie: (nrows, ncols))
+//
+// The data-array will always be written out in C-order (row-major).
+func Write(w io.Writer, val interface{}) error {
+	return npy.Write(w, val)
 }

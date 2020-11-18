@@ -5,13 +5,15 @@
 package npyio
 
 import (
-	"archive/zip"
 	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"reflect"
 	"strings"
+
+	"github.com/sbinet/npyio/npy"
+	"github.com/sbinet/npyio/npz"
 )
 
 // Dump dumps the content of the provided reader to the writer,
@@ -70,43 +72,44 @@ func Dump(o io.Writer, r io.ReaderAt) error {
 	}
 
 	switch {
-	case bytes.Equal(Magic[:], hdr[:]):
+	case bytes.Equal(npy.Magic[:], hdr[:]):
 		err = display(o, io.NewSectionReader(r, 0, sz), fname)
 		if err != nil {
 			return fmt.Errorf("npyio: could not display ile: %w", err)
 		}
 
 	case bytes.Equal(zipMagic[:], hdr[:len(zipMagic)]):
-		zr, err := zip.NewReader(r, sz)
+		zr, err := npz.NewReader(r, sz)
 		if err != nil {
-			return fmt.Errorf("npyio: could not create zip file reader: %w", err)
+			return fmt.Errorf("npyio: could not create npz reader: %w", err)
 		}
+		defer zr.Close()
 
-		for ii, f := range zr.File {
-			r, err := f.Open()
+		for i, name := range zr.Keys() {
+			r, err := zr.Open(name)
 			if err != nil {
 				return fmt.Errorf(
-					"npyio: could not open zip file entry %s: %w",
-					f.Name, err,
+					"npyio: could not open npz entry %s: %w",
+					name, err,
 				)
 			}
 			defer r.Close()
-			if ii > 0 {
+			if i > 0 {
 				fmt.Fprintf(o, "\n")
 			}
-			fmt.Fprintf(o, "entry: %s\n", f.Name)
-			err = display(o, r, fname+"@"+f.Name)
+			fmt.Fprintf(o, "entry: %s\n", name)
+			err = display(o, r, fname+"@"+name)
 			if err != nil {
 				return fmt.Errorf(
-					"npyio: could not display zip file entry %s: %w",
-					f.Name, err,
+					"npyio: could not display npz entry %s: %w",
+					name, err,
 				)
 			}
 			err = r.Close()
 			if err != nil {
 				return fmt.Errorf(
-					"npyio: could not close zip file entry %s: %w",
-					f.Name, err,
+					"npyio: could not close npz entry %s: %w",
+					name, err,
 				)
 			}
 		}
@@ -118,14 +121,14 @@ func Dump(o io.Writer, r io.ReaderAt) error {
 }
 
 func display(o io.Writer, f io.Reader, fname string) error {
-	r, err := NewReader(f)
+	r, err := npy.NewReader(f)
 	if err != nil {
 		return fmt.Errorf("npyio: could not create npy reader %s: %w", fname, err)
 	}
 
 	fmt.Fprintf(o, "npy-header: %v\n", r.Header)
 
-	rt := TypeFrom(r.Header.Descr.Type)
+	rt := npy.TypeFrom(r.Header.Descr.Type)
 	if rt == nil {
 		return fmt.Errorf("npyio: no reflect type for %q", r.Header.Descr.Type)
 	}

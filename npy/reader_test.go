@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package npyio
+package npy
 
 import (
 	"archive/zip"
@@ -41,7 +41,7 @@ func TestReaderDense(t *testing.T) {
 		for _, order := range []string{"f", "c"} {
 			for _, shape := range []string{"2x3", "6x1", "1x1", "scalar"} {
 
-				fname := fmt.Sprintf("testdata/data_%s_%s_%sorder.npy", dt, shape, order)
+				fname := fmt.Sprintf("../testdata/data_%s_%s_%sorder.npy", dt, shape, order)
 				f, err := os.Open(fname)
 				if err != nil {
 					t.Errorf("%v: error: %v\n", fname, err)
@@ -144,7 +144,7 @@ func TestReaderSlice(t *testing.T) {
 		for _, order := range []string{"f", "c"} {
 			for _, shape := range []string{"2x3", "6x1", "1x1", "scalar"} {
 
-				fname := fmt.Sprintf("testdata/data_%s_%s_%sorder.npy", dt, shape, order)
+				fname := fmt.Sprintf("../testdata/data_%s_%s_%sorder.npy", dt, shape, order)
 				f, err := os.Open(fname)
 				if err != nil {
 					t.Errorf("%v: error: %v\n", fname, err)
@@ -205,7 +205,7 @@ func TestReaderNDimSlice(t *testing.T) {
 		want[i] = float64(i)
 	}
 
-	f, err := os.Open("testdata/data_float64_2x3x4_corder.npy")
+	f, err := os.Open("../testdata/data_float64_2x3x4_corder.npy")
 	if err != nil {
 		t.Errorf("error: %v\n", err)
 	}
@@ -224,7 +224,7 @@ func TestReaderNDimSlice(t *testing.T) {
 
 func TestReaderNaNsInf(t *testing.T) {
 	want := mat.NewDense(4, 1, []float64{math.NaN(), math.Inf(-1), 0, math.Inf(+1)})
-	f, err := os.Open("testdata/nans_inf.npy")
+	f, err := os.Open("../testdata/nans_inf.npy")
 	if err != nil {
 		t.Errorf("error: %v\n", err)
 	}
@@ -261,7 +261,7 @@ func TestReaderNpz(t *testing.T) {
 	}
 
 	for _, order := range []string{"c", "f"} {
-		fname := fmt.Sprintf("testdata/data_float64_%sorder.npz", order)
+		fname := fmt.Sprintf("../testdata/data_float64_%sorder.npz", order)
 
 		zr, err := zip.OpenReader(fname)
 		if err != nil {

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package npyio
+package npy
 
 import (
 	"bytes"
@@ -83,7 +83,7 @@ func writeHeader(w io.Writer, hdr Header, dt dType) error {
 	case 2:
 		hdrSize = 6 + len(Magic)
 	default:
-		return fmt.Errorf("npyio: imvalid major version number (%d)", hdr.Major)
+		return fmt.Errorf("npy: imvalid major version number (%d)", hdr.Major)
 	}
 
 	padding := (hdrSize + buf.Len() + 1) % 16
@@ -103,7 +103,7 @@ func writeHeader(w io.Writer, hdr Header, dt dType) error {
 	case 2:
 		err = binary.Write(w, dt.order, uint32(buflen))
 	default:
-		return fmt.Errorf("npyio: invalid major version number (%d)", hdr.Major)
+		return fmt.Errorf("npy: invalid major version number (%d)", hdr.Major)
 	}
 
 	if err != nil {
@@ -427,7 +427,7 @@ func writeData(w io.Writer, rv reflect.Value, dt dType) error {
 		}
 
 	case reflect.Interface, reflect.Chan, reflect.Map, reflect.Struct:
-		return fmt.Errorf("npyio: type %v not supported", rt)
+		return fmt.Errorf("npy: type %v not supported", rt)
 	}
 
 	return binary.Write(w, dt.order, v)
@@ -502,10 +502,10 @@ func dtypeFrom(rv reflect.Value, rt reflect.Type) (string, error) {
 		return fmt.Sprintf("<U%d", len(rv.Interface().(string))), nil
 
 	case reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
-		return "", fmt.Errorf("npyio: type %v not supported", rt)
+		return "", fmt.Errorf("npy: type %v not supported", rt)
 	}
 
-	return "", fmt.Errorf("npyio: type %v not supported", rt)
+	return "", fmt.Errorf("npy: type %v not supported", rt)
 }
 
 func shapeFrom(rv reflect.Value) ([]int, error) {
@@ -527,7 +527,7 @@ func shapeFrom(rv reflect.Value) ([]int, error) {
 		return nil, nil
 
 	case reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
-		return nil, fmt.Errorf("npyio: type %v not supported", rt)
+		return nil, fmt.Errorf("npy: type %v not supported", rt)
 	}
 
 	// scalar.

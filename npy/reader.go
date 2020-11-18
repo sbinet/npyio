@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package npyio
+package npy
 
 import (
 	"bytes"
@@ -88,7 +88,7 @@ func (r *Reader) readHeader() {
 		r.read(&v)
 		hdrLen = int(v)
 	default:
-		r.err = fmt.Errorf("npyio: invalid major version number (%d)", r.Header.Major)
+		r.err = fmt.Errorf("npy: invalid major version number (%d)", r.Header.Major)
 	}
 
 	if r.err != nil {
@@ -119,7 +119,7 @@ func (r *Reader) readDescr(buf []byte) {
 	begShape := bytes.Index(buf, shapeKey)
 	endDescr := bytes.Index(buf, []byte("}"))
 	if begDescr < 0 || begOrder < 0 || begShape < 0 {
-		r.err = fmt.Errorf("npyio: invalid dictionary format")
+		r.err = fmt.Errorf("npy: invalid dictionary format")
 		return
 	}
 
@@ -134,7 +134,7 @@ func (r *Reader) readDescr(buf []byte) {
 	case "True":
 		r.Header.Descr.Fortran = true
 	default:
-		r.err = fmt.Errorf("npyio: invalid 'fortran_order' value (%v)", order)
+		r.err = fmt.Errorf("npy: invalid 'fortran_order' value (%v)", order)
 		return
 	}
 
@@ -164,7 +164,7 @@ func (r *Reader) readDescr(buf []byte) {
 // Read returns an error if the on-disk data type and the provided one
 // don't match.
 //
-// See npyio.Read() for documentation.
+// See npy.Read() for documentation.
 func (r *Reader) Read(ptr interface{}) error {
 	if r.err != nil {
 		return r.err
@@ -757,7 +757,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		return r.err
 
 	case reflect.String, reflect.Map, reflect.Chan, reflect.Interface, reflect.Struct:
-		return fmt.Errorf("npyio: type %v not supported", rv.Addr().Type())
+		return fmt.Errorf("npy: type %v not supported", rv.Addr().Type())
 	}
 
 	panic("unreachable")
@@ -769,7 +769,7 @@ func dimsFromShape(shape []int) (int, int, error) {
 
 	switch len(shape) {
 	default:
-		return -1, -1, fmt.Errorf("npyio: array shape not supported %v", shape)
+		return -1, -1, fmt.Errorf("npy: array shape not supported %v", shape)
 
 	case 0:
 		nrows = 1
@@ -855,7 +855,7 @@ func stringLen(dtype string) (int, error) {
 		}
 		return int(v), nil
 	}
-	return 0, fmt.Errorf("npyio: %q is not a string-like dtype", dtype)
+	return 0, fmt.Errorf("npy: %q is not a string-like dtype", dtype)
 }
 
 func min(a, b int) int {

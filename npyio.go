@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:generate embedmd -w README.md
+
 // Package npyio provides read/write access to files following the NumPy data file format:
 //  https://numpy.org/neps/nep-0001-npy-format.html
 //

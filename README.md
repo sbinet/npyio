@@ -1,6 +1,6 @@
 # npyio
 
-[![Build Status](https://travis-ci.org/sbinet/npyio.svg?branch=master)](https://travis-ci.org/sbinet/npyio)
+[![CI](https://github.com/sbinet/npyio/workflows/CI/badge.svg)](https://github.com/sbinet/npyio/actions)
 [![codecov](https://codecov.io/gh/sbinet/npyio/branch/master/graph/badge.svg)](https://codecov.io/gh/sbinet/npyio)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sbinet/npyio)](https://goreportcard.com/report/github.com/sbinet/npyio)
 [![License](https://img.shields.io/badge/License-BSD--3-blue.svg)](https://github.com/sbinet/npyio/blob/master/LICENSE)

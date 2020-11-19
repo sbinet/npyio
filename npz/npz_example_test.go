@@ -39,8 +39,8 @@ func ExampleOpen() {
 	fmt.Printf("arr1: %v\n", f1)
 
 	// Output:
-	// arr0.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
 	// arr1.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[6 1]}}
+	// arr0.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
 	// arr0: [0 1 2 3 4 5]
 	// arr1: [0 1 2 3 4 5]
 }
@@ -82,8 +82,8 @@ func ExampleReader() {
 	fmt.Printf("arr1: %v\n", f1)
 
 	// Output:
-	// arr0.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
 	// arr1.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[6 1]}}
+	// arr0.npy: Header{Major:1, Minor:0, Descr:{Type:<f8, Fortran:false, Shape:[2 3]}}
 	// arr0: [0 1 2 3 4 5]
 	// arr1: [0 1 2 3 4 5]
 }

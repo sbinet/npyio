@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"sort"
 
 	"github.com/sbinet/npyio/npy"
 )
@@ -69,7 +68,6 @@ func Open(name string) (*Reader, error) {
 	for i, f := range rz.File {
 		keys[i] = f.Name
 	}
-	sort.Strings(keys)
 
 	return &Reader{
 		r:    r,
@@ -91,7 +89,6 @@ func NewReader(r io.ReaderAt, size int64) (*Reader, error) {
 	for i, f := range rz.File {
 		keys[i] = f.Name
 	}
-	sort.Strings(keys)
 
 	return &Reader{
 		r:    r,

@@ -1,5 +1,7 @@
 # npyio
 
+[![GitHub release](https://img.shields.io/github/release/sbinet/npyio.svg)](https://github.com/sbinet/npyio/releases)
+[![go.dev reference](https://pkg.go.dev/badge/github.com/sbinet/npyio)](https://pkg.go.dev/github.com/sbinet/npyio)
 [![CI](https://github.com/sbinet/npyio/workflows/CI/badge.svg)](https://github.com/sbinet/npyio/actions)
 [![codecov](https://codecov.io/gh/sbinet/npyio/branch/master/graph/badge.svg)](https://codecov.io/gh/sbinet/npyio)
 [![Go Report Card](https://goreportcard.com/badge/github.com/sbinet/npyio)](https://goreportcard.com/report/github.com/sbinet/npyio)

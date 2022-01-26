@@ -517,6 +517,9 @@ func shapeFrom(rv reflect.Value) ([]int, error) {
 	rt := rv.Type()
 	switch rt.Kind() {
 	case reflect.Array, reflect.Slice:
+		if rv.Len() == 0 {
+			return []int{0}, nil
+		}
 		eshape, err := shapeFrom(rv.Index(0))
 		if err != nil {
 			return nil, err

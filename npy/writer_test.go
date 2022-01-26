@@ -6,6 +6,7 @@ package npy
 
 import (
 	"bytes"
+	"fmt"
 	"math"
 	"reflect"
 	"testing"
@@ -113,5 +114,113 @@ func TestWriterNaNsInf(t *testing.T) {
 		if !v {
 			t.Errorf("read test m.At(%d,0) failed\n got=%#v\nwant=%#v\n", i, m.At(i, 0), want.At(i, 0))
 		}
+	}
+}
+
+func TestShapeFrom(t *testing.T) {
+	for _, tc := range []struct {
+		v    interface{}
+		want []int
+		err  error
+	}{
+		{
+			v:    "hello",
+			want: nil,
+		},
+		{
+			v:    1,
+			want: nil,
+		},
+		{
+			v:    0.1,
+			want: nil,
+		},
+		{
+			v:    [0]int{},
+			want: []int{0},
+		},
+		{
+			v:    []int{},
+			want: []int{0},
+		},
+		{
+			v:    []int{1},
+			want: []int{1},
+		},
+		{
+			v:    [3][]int{nil, nil, nil},
+			want: []int{3, 0},
+		},
+		{
+			v:    [3][]int{{}, {}, {}},
+			want: []int{3, 0},
+		},
+		{
+			v:    [3][]int{{1, 2}, {3, 4}, {5, 6}},
+			want: []int{3, 2},
+		},
+		{
+			v:    [][]int{nil, nil, nil},
+			want: []int{3, 0},
+		},
+		{
+			v:    [][]int{{}, {}, {}},
+			want: []int{3, 0},
+		},
+		{
+			v:    [][]int{{1, 2}, {3, 4}, {5, 6}},
+			want: []int{3, 2},
+		},
+		{
+			v:    [][][]int{{{1}, {2}}, {{3}, {4}}, {{5}, {6}}},
+			want: []int{3, 2, 1},
+		},
+		{
+			v:    [][]float64{{1, 2}, {3, 4}, {5, 6}},
+			want: []int{3, 2},
+		},
+		{
+			v:    mat.NewDense(2, 3, []float64{1, 2, 3, 4, 5, 6}),
+			want: nil, // shapeFrom takes a deref-iface
+		},
+		{
+			v:    *mat.NewDense(2, 3, []float64{1, 2, 3, 4, 5, 6}),
+			want: []int{2, 3},
+		},
+		{
+			v:   make(map[int]int),
+			err: fmt.Errorf("npy: type map[int]int not supported"),
+		},
+		{
+			v:   make(chan int),
+			err: fmt.Errorf("npy: type chan int not supported"),
+		},
+		{
+			v:   struct{}{},
+			err: fmt.Errorf("npy: type struct {} not supported"),
+		},
+	} {
+		t.Run("", func(t *testing.T) {
+			got, err := shapeFrom(reflect.ValueOf(tc.v))
+			switch {
+			case err != nil && tc.err != nil:
+				if err.Error() != tc.err.Error() {
+					t.Fatalf("invalid error:\ngot= %+v\nwant=%+v",
+						err, tc.err,
+					)
+				}
+				return
+			case err != nil && tc.err == nil:
+				t.Fatalf("unexpected error: %+v", err)
+			case err == nil && tc.err != nil:
+				t.Fatalf("expected an error")
+			case err == nil && tc.err == nil:
+				// ok.
+			}
+
+			if !reflect.DeepEqual(got, tc.want) {
+				t.Fatalf("invalid shape.\ngot= %+v\nwant=%+v", got, tc.want)
+			}
+		})
 	}
 }

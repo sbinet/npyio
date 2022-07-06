@@ -221,7 +221,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -245,7 +245,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [1]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -264,7 +264,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -283,7 +283,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [1]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -297,7 +297,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [2]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -316,7 +316,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [2]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -330,7 +330,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -349,7 +349,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -363,7 +363,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -382,7 +382,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -396,7 +396,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [1]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -415,7 +415,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			*vptr = make([]uint8, n)
 		}
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -429,7 +429,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [2]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -448,7 +448,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [2]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -462,7 +462,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -481,7 +481,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -495,7 +495,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -514,7 +514,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -528,7 +528,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [4]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -547,7 +547,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -561,7 +561,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -580,7 +580,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -594,7 +594,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [8]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -615,7 +615,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -631,7 +631,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return ErrTypeMismatch
 		}
 		var buf [16]byte
-		_, err := r.r.Read(buf[:])
+		_, err := r.read(buf[:])
 		if err != nil && err != io.EOF {
 			r.err = err
 			return r.err
@@ -652,7 +652,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [16]byte
 		for i := 0; i < n; i++ {
-			_, err := r.r.Read(buf[:])
+			_, err := r.read(buf[:])
 			if err != nil && err != io.EOF {
 				r.err = err
 				return r.err
@@ -738,9 +738,9 @@ func (r *Reader) Read(ptr interface{}) error {
 		if !dt.rt.ConvertibleTo(rv.Type()) {
 			return errNoConv
 		}
-		var v uint8
-		r.read(&v)
-		rv.SetBool(v == 1)
+		var v [1]byte
+		r.read(v[:])
+		rv.SetBool(v[0] == 1)
 		return r.err
 
 	case reflect.Int, reflect.Uint,
@@ -792,6 +792,15 @@ func (r *Reader) readAny(v interface{}) {
 		return
 	}
 	r.err = binary.Read(r.r, r.order, v)
+}
+
+func (r *Reader) read(p []byte) (int, error) {
+	if r.err != nil {
+		return 0, r.err
+	}
+	var n int
+	n, r.err = io.ReadFull(r.r, p)
+	return n, r.err
 }
 
 func numElems(shape []int) int {

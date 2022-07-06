@@ -6,7 +6,6 @@ package npyio
 
 import (
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 	"testing"
@@ -51,7 +50,7 @@ func TestDump(t *testing.T) {
 				t.Fatalf("could not dump %q: %+v", tc.name, err)
 			}
 
-			want, err := ioutil.ReadFile(tc.want)
+			want, err := os.ReadFile(tc.want)
 			if err != nil {
 				t.Fatalf("could not read reference file %q: %+v", tc.want, err)
 			}
@@ -116,7 +115,7 @@ func TestDumpSeeker(t *testing.T) {
 				t.Fatalf("could not dump %q: %+v", tc.name, err)
 			}
 
-			want, err := ioutil.ReadFile(tc.want)
+			want, err := os.ReadFile(tc.want)
 			if err != nil {
 				t.Fatalf("could not read reference file %q: %+v", tc.want, err)
 			}

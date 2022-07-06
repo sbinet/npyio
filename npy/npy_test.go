@@ -6,7 +6,7 @@ package npy
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"testing"
 
 	"gonum.org/v1/gonum/mat"
@@ -15,7 +15,7 @@ import (
 func BenchmarkWriteDense(b *testing.B) {
 	data := make([]float64, 1000)
 	m := mat.NewDense(100, 10, data)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -25,7 +25,7 @@ func BenchmarkWriteDense(b *testing.B) {
 
 func BenchmarkWriteFloat32Slice(b *testing.B) {
 	data := make([]float32, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -35,7 +35,7 @@ func BenchmarkWriteFloat32Slice(b *testing.B) {
 
 func BenchmarkWriteFloat64Slice(b *testing.B) {
 	data := make([]float64, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -45,7 +45,7 @@ func BenchmarkWriteFloat64Slice(b *testing.B) {
 
 func BenchmarkWriteBoolSlice(b *testing.B) {
 	data := make([]bool, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -55,7 +55,7 @@ func BenchmarkWriteBoolSlice(b *testing.B) {
 
 func BenchmarkWriteUint8Slice(b *testing.B) {
 	data := make([]uint8, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -65,7 +65,7 @@ func BenchmarkWriteUint8Slice(b *testing.B) {
 
 func BenchmarkWriteUint16Slice(b *testing.B) {
 	data := make([]uint16, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -75,7 +75,7 @@ func BenchmarkWriteUint16Slice(b *testing.B) {
 
 func BenchmarkWriteUint32Slice(b *testing.B) {
 	data := make([]uint32, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -85,7 +85,7 @@ func BenchmarkWriteUint32Slice(b *testing.B) {
 
 func BenchmarkWriteUint64Slice(b *testing.B) {
 	data := make([]uint64, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -95,7 +95,7 @@ func BenchmarkWriteUint64Slice(b *testing.B) {
 
 func BenchmarkWriteInt8Slice(b *testing.B) {
 	data := make([]int8, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -105,7 +105,7 @@ func BenchmarkWriteInt8Slice(b *testing.B) {
 
 func BenchmarkWriteInt16Slice(b *testing.B) {
 	data := make([]int16, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -115,7 +115,7 @@ func BenchmarkWriteInt16Slice(b *testing.B) {
 
 func BenchmarkWriteInt32Slice(b *testing.B) {
 	data := make([]int32, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -125,7 +125,7 @@ func BenchmarkWriteInt32Slice(b *testing.B) {
 
 func BenchmarkWriteInt64Slice(b *testing.B) {
 	data := make([]int64, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -135,7 +135,7 @@ func BenchmarkWriteInt64Slice(b *testing.B) {
 
 func BenchmarkWriteComplex64Slice(b *testing.B) {
 	data := make([]complex64, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -145,7 +145,7 @@ func BenchmarkWriteComplex64Slice(b *testing.B) {
 
 func BenchmarkWriteComplex128Slice(b *testing.B) {
 	data := make([]complex128, 1000)
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -155,7 +155,7 @@ func BenchmarkWriteComplex128Slice(b *testing.B) {
 
 func BenchmarkWriteInt64Array(b *testing.B) {
 	var data [1000]int64
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {
@@ -165,7 +165,7 @@ func BenchmarkWriteInt64Array(b *testing.B) {
 
 func BenchmarkWriteFloat64Array(b *testing.B) {
 	var data [1000]float64
-	w := ioutil.Discard
+	w := io.Discard
 	b.ResetTimer()
 
 	for n := 0; n < b.N; n++ {

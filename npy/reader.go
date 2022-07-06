@@ -9,7 +9,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"math"
 	"reflect"
 	"regexp"
@@ -670,7 +669,7 @@ func (r *Reader) Read(ptr interface{}) error {
 
 		switch {
 		case dt.utf:
-			raw, err := ioutil.ReadAll(io.LimitReader(r.r, utf8.UTFMax*int64(dt.size)))
+			raw, err := io.ReadAll(io.LimitReader(r.r, utf8.UTFMax*int64(dt.size)))
 			if err != nil {
 				r.err = err
 				return r.err
@@ -685,7 +684,7 @@ func (r *Reader) Read(ptr interface{}) error {
 			return r.err
 
 		case !dt.utf:
-			buf, err := ioutil.ReadAll(io.LimitReader(r.r, int64(dt.size)))
+			buf, err := io.ReadAll(io.LimitReader(r.r, int64(dt.size)))
 			if err != nil {
 				r.err = err
 				return r.err

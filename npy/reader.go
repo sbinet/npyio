@@ -65,7 +65,7 @@ func (r *Reader) readHeader() {
 	}
 	r.order = binary.LittleEndian
 	var magic [6]byte
-	r.read(&magic)
+	r.readAny(&magic)
 	if r.err != nil {
 		return
 	}
@@ -76,16 +76,16 @@ func (r *Reader) readHeader() {
 
 	var hdrLen int
 
-	r.read(&r.Header.Major)
-	r.read(&r.Header.Minor)
+	r.readAny(&r.Header.Major)
+	r.readAny(&r.Header.Minor)
 	switch r.Header.Major {
 	case 1:
 		var v uint16
-		r.read(&v)
+		r.readAny(&v)
 		hdrLen = int(v)
 	case 2:
 		var v uint32
-		r.read(&v)
+		r.readAny(&v)
 		hdrLen = int(v)
 	default:
 		r.err = fmt.Errorf("npy: invalid major version number (%d)", r.Header.Major)
@@ -96,7 +96,7 @@ func (r *Reader) readHeader() {
 	}
 
 	hdr := make([]byte, hdrLen)
-	r.read(&hdr)
+	r.readAny(&hdr)
 	idx := bytes.LastIndexByte(hdr, '\n')
 	hdr = hdr[:idx]
 	r.readDescr(hdr)
@@ -752,7 +752,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		if !dt.rt.ConvertibleTo(rv.Type()) {
 			return errNoConv
 		}
-		r.read(v.Addr().Interface())
+		r.readAny(v.Addr().Interface())
 		rv.Set(v.Convert(rv.Type()))
 		return r.err
 
@@ -787,7 +787,7 @@ func dimsFromShape(shape []int) (int, int, error) {
 	return nrows, ncols, nil
 }
 
-func (r *Reader) read(v interface{}) {
+func (r *Reader) readAny(v interface{}) {
 	if r.err != nil {
 		return
 	}

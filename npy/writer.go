@@ -24,10 +24,10 @@ var (
 
 // Write writes 'val' into 'w' in the NumPy data format.
 //
-//  - if val is a scalar, it must be of a supported type (bools, (u)ints, floats and complexes)
-//  - if val is a slice or array, it must be a slice/array of a supported type.
-//    the shape (len,) will be written out.
-//  - if val is a mat.Dense, the correct shape will be transmitted. (ie: (nrows, ncols))
+//   - if val is a scalar, it must be of a supported type (bools, (u)ints, floats and complexes)
+//   - if val is a slice or array, it must be a slice/array of a supported type.
+//     the shape (len,) will be written out.
+//   - if val is a mat.Dense, the correct shape will be transmitted. (ie: (nrows, ncols))
 //
 // The data-array will always be written out in C-order (row-major).
 func Write(w io.Writer, val interface{}) error {

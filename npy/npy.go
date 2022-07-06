@@ -3,54 +3,56 @@
 // license that can be found in the LICENSE file.
 
 // Package npy provides read/write access to files following the NumPy data file format:
-//  https://numpy.org/neps/nep-0001-npy-format.html
 //
-// Supported types
+//	https://numpy.org/neps/nep-0001-npy-format.html
+//
+// # Supported types
 //
 // npy supports r/w of scalars, arrays, slices and gonum/mat.Dense.
 // Supported scalars are:
-//  - bool,
-//  - (u)int{8,16,32,64},
-//  - float{32,64},
-//  - complex{64,128}
+//   - bool,
+//   - (u)int{8,16,32,64},
+//   - float{32,64},
+//   - complex{64,128}
 //
-// Reading
+// # Reading
 //
 // Reading from a NumPy data file can be performed like so:
 //
-//  f, err := os.Open("data.npy")
-//  var m mat.Dense
-//  err = npy.Read(f, &m)
-//  fmt.Printf("data = %v\n", mat.Formatted(&m, mat.Prefix("       "))))
+//	f, err := os.Open("data.npy")
+//	var m mat.Dense
+//	err = npy.Read(f, &m)
+//	fmt.Printf("data = %v\n", mat.Formatted(&m, mat.Prefix("       "))))
 //
 // npy can also read data directly into slices, arrays or scalars, provided
 // the on-disk data type and the provided one match.
 //
 // Example:
-//  var data []float64
-//  err = npy.Read(f, &data)
 //
-//  var data uint64
-//  err = npy.Read(f, &data)
+//	var data []float64
+//	err = npy.Read(f, &data)
 //
-// Writing
+//	var data uint64
+//	err = npy.Read(f, &data)
+//
+// # Writing
 //
 // Writing into a NumPy data file can be done like so:
 //
-//  f, err := os.Create("data.npy")
-//  var m mat.Dense = ...
-//  err = npy.Write(f, m)
+//	f, err := os.Create("data.npy")
+//	var m mat.Dense = ...
+//	err = npy.Write(f, m)
 //
 // Scalars, arrays and slices are also supported:
 //
-//  var data []float64 = ...
-//  err = npy.Write(f, data)
+//	var data []float64 = ...
+//	err = npy.Write(f, data)
 //
-//  var data int64 = 42
-//  err = npy.Write(f, data)
+//	var data int64 = 42
+//	err = npy.Write(f, data)
 //
-//  var data [42]complex128 = ...
-//  err = npy.Write(f, data)
+//	var data [42]complex128 = ...
+//	err = npy.Write(f, data)
 package npy
 
 import (

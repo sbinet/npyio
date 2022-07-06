@@ -5,8 +5,7 @@
 // Package npz provides read/write access to files with compressed NumPy data
 // file format:
 //
-//  https://numpy.org/neps/nep-0001-npy-format.html
-//
+//	https://numpy.org/neps/nep-0001-npy-format.html
 package npz
 
 import (

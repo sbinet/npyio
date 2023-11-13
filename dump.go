@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"reflect"
 	"strings"
 
 	"github.com/sbinet/npyio/npy"
@@ -128,15 +127,11 @@ func display(o io.Writer, f io.Reader, fname string) error {
 
 	fmt.Fprintf(o, "npy-header: %v\n", r.Header)
 
-	rt := npy.TypeFrom(r.Header.Descr.Type)
-	if rt == nil {
-		return fmt.Errorf("npyio: no reflect type for %q", r.Header.Descr.Type)
-	}
-	rv := reflect.New(reflect.SliceOf(rt))
-	err = r.Read(rv.Interface())
+	var arr npy.Array
+	err = r.Read(&arr)
 	if err != nil && err != io.EOF {
 		return fmt.Errorf("npyio: read error: %w", err)
 	}
-	fmt.Fprintf(o, "data = %v\n", rv.Elem().Interface())
+	fmt.Fprintf(o, "data = %v\n", arr.Data())
 	return nil
 }

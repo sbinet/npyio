@@ -1,0 +1,4 @@
+================================================================================
+file: testdata/ragged-array-mixed.npy
+npy-header: Header{Major:1, Minor:0, Descr:{Type:|O, Fortran:false, Shape:[3]}}
+data = [[1, 2, 3, 4], [5, six, 7], [8, 9]]

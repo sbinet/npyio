@@ -36,6 +36,14 @@ func TestDump(t *testing.T) {
 			name: "testdata/data_float64_forder.npz",
 			want: "testdata/data_float64_forder.npz.txt",
 		},
+		{
+			name: "testdata/ragged-array.npy",
+			want: "testdata/ragged-array.npy.txt",
+		},
+		{
+			name: "testdata/ragged-array-mixed.npy",
+			want: "testdata/ragged-array-mixed.npy.txt",
+		},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			f, err := os.Open(tc.name)

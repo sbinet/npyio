@@ -132,6 +132,7 @@ var (
 	complex64Type  = reflect.TypeOf((*complex64)(nil)).Elem()
 	complex128Type = reflect.TypeOf((*complex128)(nil)).Elem()
 	stringType     = reflect.TypeOf((*string)(nil)).Elem()
+	anyType        = reflect.TypeOf((*interface{})(nil)).Elem()
 
 	trueUint8  = []byte{1}
 	falseUint8 = []byte{0}
@@ -205,6 +206,10 @@ func newDtype(str string) (dType, error) {
 	case "c16", "<c16", "|c16", ">c16", "complex128":
 		dt.rt = complex128Type
 		dt.size = 16
+
+	case "O", "|O", "object":
+		dt.rt = anyType
+		dt.size = 8
 	}
 
 	switch {
@@ -238,14 +243,31 @@ func newDtype(str string) (dType, error) {
 	return dt, nil
 }
 
-var nativeEndian binary.ByteOrder
+var nativeEndian struct {
+	binary.ByteOrder
+}
 
 func init() {
 	v := uint16(1)
 	switch byte(v >> 8) {
 	case 0:
-		nativeEndian = binary.LittleEndian
+		nativeEndian.ByteOrder = binary.LittleEndian
 	case 1:
-		nativeEndian = binary.BigEndian
+		nativeEndian.ByteOrder = binary.BigEndian
+	}
+}
+
+func orderToString(v binary.ByteOrder) string {
+	switch v {
+	case binary.LittleEndian:
+		return "<"
+	case binary.BigEndian:
+		return ">"
+	case nativeEndian:
+		return "="
+	case nil:
+		return "|"
+	default:
+		return "?"
 	}
 }

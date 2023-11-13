@@ -1,0 +1,1542 @@
+// Copyright 2023 The npyio Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// Automatically generated. DO NOT EDIT.
+
+package npy
+
+import (
+	"encoding/binary"
+)
+
+var dtypeTests = []struct {
+	name string
+	code string
+	pkl  string
+	want *ArrayDescr
+}{
+	{
+		// pickle.dumps(np.dtype(">b1"), protocol=4)
+		name: "dtype-0",
+		code: `np.dtype(">b1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02b1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'b',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<b1"), protocol=4)
+		name: "dtype-1",
+		code: `np.dtype("<b1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02b1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'b',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">i1"), protocol=4)
+		name: "dtype-2",
+		code: `np.dtype(">i1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<i1"), protocol=4)
+		name: "dtype-3",
+		code: `np.dtype("<i1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">i2"), protocol=4)
+		name: "dtype-4",
+		code: `np.dtype(">i2")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.BigEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<i2"), protocol=4)
+		name: "dtype-5",
+		code: `np.dtype("<i2")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">i4"), protocol=4)
+		name: "dtype-6",
+		code: `np.dtype(">i4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.BigEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<i4"), protocol=4)
+		name: "dtype-7",
+		code: `np.dtype("<i4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">i8"), protocol=4)
+		name: "dtype-8",
+		code: `np.dtype(">i8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.BigEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<i8"), protocol=4)
+		name: "dtype-9",
+		code: `np.dtype("<i8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("int8"), protocol=4)
+		name: "dtype-10",
+		code: `np.dtype("int8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("int16"), protocol=4)
+		name: "dtype-11",
+		code: `np.dtype("int16")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("int32"), protocol=4)
+		name: "dtype-12",
+		code: `np.dtype("int32")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("int64"), protocol=4)
+		name: "dtype-13",
+		code: `np.dtype("int64")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'i',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">u1"), protocol=4)
+		name: "dtype-14",
+		code: `np.dtype(">u1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<u1"), protocol=4)
+		name: "dtype-15",
+		code: `np.dtype("<u1")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">u2"), protocol=4)
+		name: "dtype-16",
+		code: `np.dtype(">u2")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.BigEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<u2"), protocol=4)
+		name: "dtype-17",
+		code: `np.dtype("<u2")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">u4"), protocol=4)
+		name: "dtype-18",
+		code: `np.dtype(">u4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.BigEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<u4"), protocol=4)
+		name: "dtype-19",
+		code: `np.dtype("<u4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">u8"), protocol=4)
+		name: "dtype-20",
+		code: `np.dtype(">u8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.BigEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<u8"), protocol=4)
+		name: "dtype-21",
+		code: `np.dtype("<u8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("uint8"), protocol=4)
+		name: "dtype-22",
+		code: `np.dtype("uint8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: nil,
+			esize: 1,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("uint16"), protocol=4)
+		name: "dtype-23",
+		code: `np.dtype("uint16")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 2,
+			align: 2,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("uint32"), protocol=4)
+		name: "dtype-24",
+		code: `np.dtype("uint32")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("uint64"), protocol=4)
+		name: "dtype-25",
+		code: `np.dtype("uint64")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02u8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'u',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">f4"), protocol=4)
+		name: "dtype-26",
+		code: `np.dtype(">f4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02f4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'f',
+			order: binary.BigEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<f4"), protocol=4)
+		name: "dtype-27",
+		code: `np.dtype("<f4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02f4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'f',
+			order: binary.LittleEndian,
+			esize: 4,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">f8"), protocol=4)
+		name: "dtype-28",
+		code: `np.dtype(">f8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'f',
+			order: binary.BigEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<f8"), protocol=4)
+		name: "dtype-29",
+		code: `np.dtype("<f8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'f',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">c8"), protocol=4)
+		name: "dtype-30",
+		code: `np.dtype(">c8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02c8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'c',
+			order: binary.BigEndian,
+			esize: 8,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<c8"), protocol=4)
+		name: "dtype-31",
+		code: `np.dtype("<c8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02c8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'c',
+			order: binary.LittleEndian,
+			esize: 8,
+			align: 4,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">c16"), protocol=4)
+		name: "dtype-32",
+		code: `np.dtype(">c16")`,
+		pkl:  "\x80\x04\x958\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'c',
+			order: binary.BigEndian,
+			esize: 16,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<c16"), protocol=4)
+		name: "dtype-33",
+		code: `np.dtype("<c16")`,
+		pkl:  "\x80\x04\x958\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'c',
+			order: binary.LittleEndian,
+			esize: 16,
+			align: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<S4"), protocol=4)
+		name: "dtype-34",
+		code: `np.dtype("<S4")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 4,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">S4"), protocol=4)
+		name: "dtype-35",
+		code: `np.dtype(">S4")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 4,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("=S4"), protocol=4)
+		name: "dtype-36",
+		code: `np.dtype("=S4")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 4,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("|S4"), protocol=4)
+		name: "dtype-37",
+		code: `np.dtype("|S4")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 4,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("S4"), protocol=4)
+		name: "dtype-38",
+		code: `np.dtype("S4")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 4,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("S8"), protocol=4)
+		name: "dtype-39",
+		code: `np.dtype("S8")`,
+		pkl:  "\x80\x04\x951\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02S8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\bK\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 8,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("S42"), protocol=4)
+		name: "dtype-40",
+		code: `np.dtype("S42")`,
+		pkl:  "\x80\x04\x952\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03S42\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK*K\x01K\x00t\x94b.",
+		want: &ArrayDescr{
+			kind:  'S',
+			order: nil,
+			esize: 42,
+			align: 1,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<O4"), protocol=4)
+		name: "dtype-41",
+		code: `np.dtype("<O4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">O4"), protocol=4)
+		name: "dtype-42",
+		code: `np.dtype(">O4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("=O4"), protocol=4)
+		name: "dtype-43",
+		code: `np.dtype("=O4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("|O4"), protocol=4)
+		name: "dtype-44",
+		code: `np.dtype("|O4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("O4"), protocol=4)
+		name: "dtype-45",
+		code: `np.dtype("O4")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<O8"), protocol=4)
+		name: "dtype-46",
+		code: `np.dtype("<O8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">O8"), protocol=4)
+		name: "dtype-47",
+		code: `np.dtype(">O8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("=O8"), protocol=4)
+		name: "dtype-48",
+		code: `np.dtype("=O8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("|O8"), protocol=4)
+		name: "dtype-49",
+		code: `np.dtype("|O8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("O8"), protocol=4)
+		name: "dtype-50",
+		code: `np.dtype("O8")`,
+		pkl:  "\x80\x04\x957\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b.",
+		want: &ArrayDescr{
+			kind:  'O',
+			order: nil,
+			esize: 8,
+			align: 8,
+			flags: 63,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype([('f1', [('f1', np.int16)])]), protocol=4)
+		name: "dtype-51",
+		code: `np.dtype([('f1', [('f1', np.int16)])])`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x02V2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94N\x8c\x02f1\x94\x85\x94}\x94h\ah\x02\x8c\x02V2\x94\x89\x88\x87\x94R\x94(K\x03h\x06Nh\a\x85\x94}\x94h\ah\x02\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x00\x86\x94sK\x02K\x01K\x10t\x94bK\x00\x86\x94sK\x02K\x01K\x10t\x94b.",
+		want: &ArrayDescr{
+			kind:  'V',
+			order: nil,
+			esize: 2,
+			align: 1,
+			flags: 16,
+			names: []string{"f1"},
+			fields: map[string]structField{
+				"f1": {
+					dtype: ArrayDescr{
+						kind:  'V',
+						order: nil,
+						esize: 2,
+						align: 1,
+						flags: 16,
+						names: []string{"f1"},
+						fields: map[string]structField{
+							"f1": {
+								dtype: ArrayDescr{
+									kind:  'i',
+									order: binary.LittleEndian,
+									esize: 2,
+									align: 2,
+								},
+								offset: 0,
+							},
+						},
+					},
+					offset: 0,
+				},
+			},
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("i4, (2,3)f8"), protocol=4)
+		name: "dtype-52",
+		code: `np.dtype("i4, (2,3)f8")`,
+		pkl:  "\x80\x04\x95\xbc\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03V52\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94N\x8c\x02f0\x94\x8c\x02f1\x94\x86\x94}\x94(h\ah\x02\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x00\x86\x94h\bh\x02\x8c\x03V48\x94\x89\x88\x87\x94R\x94(K\x03h\x06h\x02\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03h\x0eNNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x02K\x03\x86\x94\x86\x94NNK0K\bK\x00t\x94bK\x04\x86\x94uK4K\x01K\x10t\x94b.",
+		want: &ArrayDescr{
+			kind:  'V',
+			order: nil,
+			esize: 52,
+			align: 1,
+			flags: 16,
+			names: []string{"f0", "f1"},
+			fields: map[string]structField{
+				"f0": {
+					dtype: ArrayDescr{
+						kind:  'i',
+						order: binary.LittleEndian,
+						esize: 4,
+						align: 4,
+					},
+					offset: 0,
+				},
+				"f1": {
+					dtype: ArrayDescr{
+						kind:  'V',
+						order: nil,
+						esize: 48,
+						align: 8,
+						subarr: &subarrayDescr{
+							dtype: ArrayDescr{
+								kind:  'f',
+								order: binary.LittleEndian,
+								esize: 8,
+								align: 8,
+							},
+							shape: []int{2, 3},
+						},
+					},
+					offset: 4,
+				},
+			},
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("i2, i4, (2,3)f8"), protocol=4)
+		name: "dtype-53",
+		code: `np.dtype("i2, i4, (2,3)f8")`,
+		pkl:  "\x80\x04\x95\xeb\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03V54\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94N\x8c\x02f0\x94\x8c\x02f1\x94\x8c\x02f2\x94\x87\x94}\x94(h\ah\x02\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x00\x86\x94h\bh\x02\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03h\x0fNNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x02\x86\x94h\th\x02\x8c\x03V48\x94\x89\x88\x87\x94R\x94(K\x03h\x06h\x02\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03h\x0fNNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x02K\x03\x86\x94\x86\x94NNK0K\bK\x00t\x94bK\x06\x86\x94uK6K\x01K\x10t\x94b.",
+		want: &ArrayDescr{
+			kind:  'V',
+			order: nil,
+			esize: 54,
+			align: 1,
+			flags: 16,
+			names: []string{"f0", "f1", "f2"},
+			fields: map[string]structField{
+				"f0": {
+					dtype: ArrayDescr{
+						kind:  'i',
+						order: binary.LittleEndian,
+						esize: 2,
+						align: 2,
+					},
+					offset: 0,
+				},
+				"f1": {
+					dtype: ArrayDescr{
+						kind:  'i',
+						order: binary.LittleEndian,
+						esize: 4,
+						align: 4,
+					},
+					offset: 2,
+				},
+				"f2": {
+					dtype: ArrayDescr{
+						kind:  'V',
+						order: nil,
+						esize: 48,
+						align: 8,
+						subarr: &subarrayDescr{
+							dtype: ArrayDescr{
+								kind:  'f',
+								order: binary.LittleEndian,
+								esize: 8,
+								align: 8,
+							},
+							shape: []int{2, 3},
+						},
+					},
+					offset: 6,
+				},
+			},
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("i2, i8, (2,3)f8"), protocol=4)
+		name: "dtype-54",
+		code: `np.dtype("i2, i8, (2,3)f8")`,
+		pkl:  "\x80\x04\x95\xeb\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03V58\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94N\x8c\x02f0\x94\x8c\x02f1\x94\x8c\x02f2\x94\x87\x94}\x94(h\ah\x02\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x00\x86\x94h\bh\x02\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03h\x0fNNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x02\x86\x94h\th\x02\x8c\x03V48\x94\x89\x88\x87\x94R\x94(K\x03h\x06h\x02\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03h\x0fNNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94bK\x02K\x03\x86\x94\x86\x94NNK0K\bK\x00t\x94bK\n\x86\x94uK:K\x01K\x10t\x94b.",
+		want: &ArrayDescr{
+			kind:  'V',
+			order: nil,
+			esize: 58,
+			align: 1,
+			flags: 16,
+			names: []string{"f0", "f1", "f2"},
+			fields: map[string]structField{
+				"f0": {
+					dtype: ArrayDescr{
+						kind:  'i',
+						order: binary.LittleEndian,
+						esize: 2,
+						align: 2,
+					},
+					offset: 0,
+				},
+				"f1": {
+					dtype: ArrayDescr{
+						kind:  'i',
+						order: binary.LittleEndian,
+						esize: 8,
+						align: 8,
+					},
+					offset: 2,
+				},
+				"f2": {
+					dtype: ArrayDescr{
+						kind:  'V',
+						order: nil,
+						esize: 48,
+						align: 8,
+						subarr: &subarrayDescr{
+							dtype: ArrayDescr{
+								kind:  'f',
+								order: binary.LittleEndian,
+								esize: 8,
+								align: 8,
+							},
+							shape: []int{2, 3},
+						},
+					},
+					offset: 10,
+				},
+			},
+		},
+	},
+	{
+		// pickle.dumps(np.dtype("<U10"), protocol=4)
+		name: "dtype-55",
+		code: `np.dtype("<U10")`,
+		pkl:  "\x80\x04\x952\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNK(K\x04K\bt\x94b.",
+		want: &ArrayDescr{
+			kind:  'U',
+			order: binary.LittleEndian,
+			esize: 40,
+			align: 4,
+			flags: 8,
+		},
+	},
+	{
+		// pickle.dumps(np.dtype(">U10"), protocol=4)
+		name: "dtype-56",
+		code: `np.dtype(">U10")`,
+		pkl:  "\x80\x04\x952\x00\x00\x00\x00\x00\x00\x00\x8c\x05numpy\x94\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNK(K\x04K\bt\x94b.",
+		want: &ArrayDescr{
+			kind:  'U',
+			order: binary.BigEndian,
+			esize: 40,
+			align: 4,
+			flags: 8,
+		},
+	},
+}
+
+var ndarrayTests = []struct {
+	name string
+	code string
+	pkl  string
+	want *Array
+}{
+	{
+		// pickle.dumps(np.array([True,False,True], dtype="<b1"), protocol=4)
+		name: "ndarray-0",
+		code: `np.array([True,False,True], dtype="<b1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02b1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\x01\x00\x01\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'b',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []bool{true, false, true},
+		},
+	},
+	{
+		// pickle.dumps(np.array([True,False,True], dtype=">b1"), protocol=4)
+		name: "ndarray-1",
+		code: `np.array([True,False,True], dtype=">b1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02b1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\x01\x00\x01\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'b',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []bool{true, false, true},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<i1"), protocol=4)
+		name: "ndarray-2",
+		code: `np.array([-1,+2,-3], dtype="<i1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\xff\x02\xfd\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []int8{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">i1"), protocol=4)
+		name: "ndarray-3",
+		code: `np.array([-1,+2,-3], dtype=">i1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\xff\x02\xfd\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []int8{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<i2"), protocol=4)
+		name: "ndarray-4",
+		code: `np.array([-1,+2,-3], dtype="<i2")`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x06\xff\xff\x02\x00\xfd\xff\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.LittleEndian,
+				esize: 2,
+				align: 2,
+			},
+			shape:   []int{3},
+			strides: []int{2},
+			data:    []int16{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">i2"), protocol=4)
+		name: "ndarray-5",
+		code: `np.array([-1,+2,-3], dtype=">i2")`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x06\xff\xff\x00\x02\xff\xfd\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.BigEndian,
+				esize: 2,
+				align: 2,
+			},
+			shape:   []int{3},
+			strides: []int{2},
+			data:    []int16{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<i4"), protocol=4)
+		name: "ndarray-6",
+		code: `np.array([-1,+2,-3], dtype="<i4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\xff\xff\xff\xff\x02\x00\x00\x00\xfd\xff\xff\xff\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.LittleEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []int32{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">i4"), protocol=4)
+		name: "ndarray-7",
+		code: `np.array([-1,+2,-3], dtype=">i4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\xff\xff\xff\xff\x00\x00\x00\x02\xff\xff\xff\xfd\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.BigEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []int32{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<i8"), protocol=4)
+		name: "ndarray-8",
+		code: `np.array([-1,+2,-3], dtype="<i8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\xff\xff\xff\xff\xff\xff\xff\xff\x02\x00\x00\x00\x00\x00\x00\x00\xfd\xff\xff\xff\xff\xff\xff\xff\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.LittleEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []int64{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">i8"), protocol=4)
+		name: "ndarray-9",
+		code: `np.array([-1,+2,-3], dtype=">i8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\xff\xff\xff\xff\xff\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x02\xff\xff\xff\xff\xff\xff\xff\xfd\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.BigEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []int64{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype="<u1"), protocol=4)
+		name: "ndarray-10",
+		code: `np.array([1,2,3], dtype="<u1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\x01\x02\x03\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []uint8{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype=">u1"), protocol=4)
+		name: "ndarray-11",
+		code: `np.array([1,2,3], dtype=">u1")`,
+		pkl:  "\x80\x04\x95\x8b\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u1\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x03\x01\x02\x03\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: nil,
+				esize: 1,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{1},
+			data:    []uint8{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype="<u2"), protocol=4)
+		name: "ndarray-12",
+		code: `np.array([1,2,3], dtype="<u2")`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x06\x01\x00\x02\x00\x03\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.LittleEndian,
+				esize: 2,
+				align: 2,
+			},
+			shape:   []int{3},
+			strides: []int{2},
+			data:    []uint16{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype=">u2"), protocol=4)
+		name: "ndarray-13",
+		code: `np.array([1,2,3], dtype=">u2")`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u2\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x06\x00\x01\x00\x02\x00\x03\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.BigEndian,
+				esize: 2,
+				align: 2,
+			},
+			shape:   []int{3},
+			strides: []int{2},
+			data:    []uint16{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype="<u4"), protocol=4)
+		name: "ndarray-14",
+		code: `np.array([1,2,3], dtype="<u4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.LittleEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []uint32{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype=">u4"), protocol=4)
+		name: "ndarray-15",
+		code: `np.array([1,2,3], dtype=">u4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.BigEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []uint32{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype="<u8"), protocol=4)
+		name: "ndarray-16",
+		code: `np.array([1,2,3], dtype="<u8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.LittleEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []uint64{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([1,2,3], dtype=">u8"), protocol=4)
+		name: "ndarray-17",
+		code: `np.array([1,2,3], dtype=">u8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02u8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x03\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'u',
+				order: binary.BigEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []uint64{1, 2, 3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<f4"), protocol=4)
+		name: "ndarray-18",
+		code: `np.array([-1,+2,-3], dtype="<f4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02f4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\x00\x00\x80\xbf\x00\x00\x00@\x00\x00@\xc0\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'f',
+				order: binary.LittleEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []float32{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">f4"), protocol=4)
+		name: "ndarray-19",
+		code: `np.array([-1,+2,-3], dtype=">f4")`,
+		pkl:  "\x80\x04\x95\x94\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02f4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\f\xbf\x80\x00\x00@\x00\x00\x00\xc0@\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'f',
+				order: binary.BigEndian,
+				esize: 4,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []float32{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype="<f8"), protocol=4)
+		name: "ndarray-20",
+		code: `np.array([-1,+2,-3], dtype="<f8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\x00\x00\x00\x00\x00\x00\xf0\xbf\x00\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\b\xc0\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'f',
+				order: binary.LittleEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []float64{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([-1,+2,-3], dtype=">f8"), protocol=4)
+		name: "ndarray-21",
+		code: `np.array([-1,+2,-3], dtype=">f8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02f8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\xbf\xf0\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\xc0\b\x00\x00\x00\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'f',
+				order: binary.BigEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []float64{-1, +2, -3},
+		},
+	},
+	{
+		// pickle.dumps(np.array([(-1+1j),(+2-2j),(-3+3j)], dtype="<c8"), protocol=4)
+		name: "ndarray-22",
+		code: `np.array([(-1+1j),(+2-2j),(-3+3j)], dtype="<c8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02c8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\x00\x00\x80\xbf\x00\x00\x80?\x00\x00\x00@\x00\x00\x00\xc0\x00\x00@\xc0\x00\x00@@\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.LittleEndian,
+				esize: 8,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []complex64{complex(-1, 1), complex(2, -2), complex(-3, 3)},
+		},
+	},
+	{
+		// pickle.dumps(np.array([(-1+1j),(+2-2j),(-3+3j)], dtype=">c8"), protocol=4)
+		name: "ndarray-23",
+		code: `np.array([(-1+1j),(+2-2j),(-3+3j)], dtype=">c8")`,
+		pkl:  "\x80\x04\x95\xa0\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02c8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C\x18\xbf\x80\x00\x00?\x80\x00\x00@\x00\x00\x00\xc0\x00\x00\x00\xc0@\x00\x00@@\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.BigEndian,
+				esize: 8,
+				align: 4,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    []complex64{complex(-1, 1), complex(2, -2), complex(-3, 3)},
+		},
+	},
+	{
+		// pickle.dumps(np.array([(-1+1j),(+2-2j),(-3+3j)], dtype="<c16"), protocol=4)
+		name: "ndarray-24",
+		code: `np.array([(-1+1j),(+2-2j),(-3+3j)], dtype="<c16")`,
+		pkl:  "\x80\x04\x95\xb9\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C0\x00\x00\x00\x00\x00\x00\xf0\xbf\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x00\b\xc0\x00\x00\x00\x00\x00\x00\b@\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.LittleEndian,
+				esize: 16,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{16},
+			data:    []complex128{complex(-1, 1), complex(2, -2), complex(-3, 3)},
+		},
+	},
+	{
+		// pickle.dumps(np.array([(-1+1j),(+2-2j),(-3+3j)], dtype=">c16"), protocol=4)
+		name: "ndarray-25",
+		code: `np.array([(-1+1j),(+2-2j),(-3+3j)], dtype=">c16")`,
+		pkl:  "\x80\x04\x95\xb9\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C0\xbf\xf0\x00\x00\x00\x00\x00\x00?\xf0\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x00\x00\xc0\b\x00\x00\x00\x00\x00\x00@\b\x00\x00\x00\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.BigEndian,
+				esize: 16,
+				align: 8,
+			},
+			shape:   []int{3},
+			strides: []int{16},
+			data:    []complex128{complex(-1, 1), complex(2, -2), complex(-3, 3)},
+		},
+	},
+	{
+		// pickle.dumps(np.array("hello world!", dtype="S12"), protocol=4)
+		name: "ndarray-26",
+		code: `np.array("hello world!", dtype="S12")`,
+		pkl:  "\x80\x04\x95\x8c\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01)h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03S12\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\fK\x01K\x00t\x94b\x89C\fhello world!\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'S',
+				order: nil,
+				esize: 12,
+				align: 1,
+			},
+			data: "hello world!",
+		},
+	},
+	{
+		// pickle.dumps(np.array(["hell","o wo", "rld!"], dtype="S4"), protocol=4)
+		name: "ndarray-27",
+		code: `np.array(["hell","o wo", "rld!"], dtype="S4")`,
+		pkl:  "\x80\x04\x95\x8e\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02S4\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNK\x04K\x01K\x00t\x94b\x89C\fhello world!\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'S',
+				order: nil,
+				esize: 4,
+				align: 1,
+			},
+			shape:   []int{3},
+			strides: []int{4},
+			data:    []string{"hell", "o wo", "rld!"},
+		},
+	},
+	{
+		// pickle.dumps(np.array("hello, 世界!", dtype="<U10"), protocol=4)
+		name: "ndarray-28",
+		code: `np.array("hello, 世界!", dtype="<U10")`,
+		pkl:  "\x80\x04\x95\xa8\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01)h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNK(K\x04K\bt\x94b\x89C(h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00\x00\x16N\x00\x00Lu\x00\x00!\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.LittleEndian,
+				esize: 40,
+				align: 4,
+				flags: 8,
+			},
+			data: "hello, 世界!",
+		},
+	},
+	{
+		// pickle.dumps(np.array("hello, 世界!", dtype=">U10"), protocol=4)
+		name: "ndarray-29",
+		code: `np.array("hello, 世界!", dtype=">U10")`,
+		pkl:  "\x80\x04\x95\xa8\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01)h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNK(K\x04K\bt\x94b\x89C(\x00\x00\x00h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00N\x16\x00\x00uL\x00\x00\x00!\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.BigEndian,
+				esize: 40,
+				align: 4,
+				flags: 8,
+			},
+			data: "hello, 世界!",
+		},
+	},
+	{
+		// pickle.dumps(np.array(["hello, 世界!"], dtype="<U10"), protocol=4)
+		name: "ndarray-30",
+		code: `np.array(["hello, 世界!"], dtype="<U10")`,
+		pkl:  "\x80\x04\x95\xab\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x01\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNK(K\x04K\bt\x94b\x89C(h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00\x00\x16N\x00\x00Lu\x00\x00!\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.LittleEndian,
+				esize: 40,
+				align: 4,
+				flags: 8,
+			},
+			shape:   []int{1},
+			strides: []int{40},
+			data:    []string{"hello, 世界!"},
+		},
+	},
+	{
+		// pickle.dumps(np.array(["hello, 世界!"], dtype=">U10"), protocol=4)
+		name: "ndarray-31",
+		code: `np.array(["hello, 世界!"], dtype=">U10")`,
+		pkl:  "\x80\x04\x95\xab\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x01\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03U10\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNK(K\x04K\bt\x94b\x89C(\x00\x00\x00h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00N\x16\x00\x00uL\x00\x00\x00!\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.BigEndian,
+				esize: 40,
+				align: 4,
+				flags: 8,
+			},
+			shape:   []int{1},
+			strides: []int{40},
+			data:    []string{"hello, 世界!"},
+		},
+	},
+	{
+		// pickle.dumps(np.array([["hello"], [", 世界!"]], dtype="<U5"), protocol=4)
+		name: "ndarray-32",
+		code: `np.array([["hello"], [", 世界!"]], dtype="<U5")`,
+		pkl:  "\x80\x04\x95\xac\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x01\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02U5\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNK\x14K\x04K\bt\x94b\x89C(h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00\x00\x16N\x00\x00Lu\x00\x00!\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.LittleEndian,
+				esize: 20,
+				align: 4,
+				flags: 8,
+			},
+			shape:   []int{2, 1},
+			strides: []int{20, 20},
+			data:    []string{"hello", ", 世界!"},
+		},
+	},
+	{
+		// pickle.dumps(np.array([["hello"], [", 世界!"]], dtype=">U5"), protocol=4)
+		name: "ndarray-33",
+		code: `np.array([["hello"], [", 世界!"]], dtype=">U5")`,
+		pkl:  "\x80\x04\x95\xac\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x01\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02U5\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNK\x14K\x04K\bt\x94b\x89C(\x00\x00\x00h\x00\x00\x00e\x00\x00\x00l\x00\x00\x00l\x00\x00\x00o\x00\x00\x00,\x00\x00\x00 \x00\x00N\x16\x00\x00uL\x00\x00\x00!\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'U',
+				order: binary.BigEndian,
+				esize: 20,
+				align: 4,
+				flags: 8,
+			},
+			shape:   []int{2, 1},
+			strides: []int{20, 20},
+			data:    []string{"hello", ", 世界!"},
+		},
+	},
+	{
+		// pickle.dumps(np.array([[-1,-2,-3],[-4,-5,-6]], dtype="<i8"), protocol=4)
+		name: "ndarray-34",
+		code: `np.array([[-1,-2,-3],[-4,-5,-6]], dtype="<i8")`,
+		pkl:  "\x80\x04\x95\xba\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x03\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C0\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff\xff\xff\xff\xff\xfd\xff\xff\xff\xff\xff\xff\xff\xfc\xff\xff\xff\xff\xff\xff\xff\xfb\xff\xff\xff\xff\xff\xff\xff\xfa\xff\xff\xff\xff\xff\xff\xff\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.LittleEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{2, 3},
+			strides: []int{24, 8},
+			data:    []int64{-1, -2, -3, -4, -5, -6},
+		},
+	},
+	{
+		// pickle.dumps(np.array([[-1,-2,-3],[-4,-5,-6]], dtype=">i8"), protocol=4)
+		name: "ndarray-35",
+		code: `np.array([[-1,-2,-3],[-4,-5,-6]], dtype=">i8")`,
+		pkl:  "\x80\x04\x95\xba\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x03\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02i8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C0\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff\xff\xff\xff\xff\xfd\xff\xff\xff\xff\xff\xff\xff\xfc\xff\xff\xff\xff\xff\xff\xff\xfb\xff\xff\xff\xff\xff\xff\xff\xfa\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'i',
+				order: binary.BigEndian,
+				esize: 8,
+				align: 8,
+			},
+			shape:   []int{2, 3},
+			strides: []int{24, 8},
+			data:    []int64{-1, -2, -3, -4, -5, -6},
+		},
+	},
+	{
+		// pickle.dumps(np.array([[(-1+1j),(+2-2j),(-3+3j)],[(-4+4j),(-5+5j),(-6+6j)]], dtype="<c16"), protocol=4)
+		name: "ndarray-36",
+		code: `np.array([[(-1+1j),(+2-2j),(-3+3j)],[(-4+4j),(-5+5j),(-6+6j)]], dtype="<c16")`,
+		pkl:  "\x80\x04\x95\xeb\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x03\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01<\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C`\x00\x00\x00\x00\x00\x00\xf0\xbf\x00\x00\x00\x00\x00\x00\xf0?\x00\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x00\b\xc0\x00\x00\x00\x00\x00\x00\b@\x00\x00\x00\x00\x00\x00\x10\xc0\x00\x00\x00\x00\x00\x00\x10@\x00\x00\x00\x00\x00\x00\x14\xc0\x00\x00\x00\x00\x00\x00\x14@\x00\x00\x00\x00\x00\x00\x18\xc0\x00\x00\x00\x00\x00\x00\x18@\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.LittleEndian,
+				esize: 16,
+				align: 8,
+			},
+			shape:   []int{2, 3},
+			strides: []int{48, 16},
+			data:    []complex128{complex(-1, 1), complex(2, -2), complex(-3, 3), complex(-4, 4), complex(-5, 5), complex(-6, 6)},
+		},
+	},
+	{
+		// pickle.dumps(np.array([[(-1+1j),(+2-2j),(-3+3j)],[(-4+4j),(-5+5j),(-6+6j)]], dtype=">c16"), protocol=4)
+		name: "ndarray-37",
+		code: `np.array([[(-1+1j),(+2-2j),(-3+3j)],[(-4+4j),(-5+5j),(-6+6j)]], dtype=">c16")`,
+		pkl:  "\x80\x04\x95\xeb\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x02K\x03\x86\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x03c16\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01>\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK\x00t\x94b\x89C`\xbf\xf0\x00\x00\x00\x00\x00\x00?\xf0\x00\x00\x00\x00\x00\x00@\x00\x00\x00\x00\x00\x00\x00\xc0\x00\x00\x00\x00\x00\x00\x00\xc0\b\x00\x00\x00\x00\x00\x00@\b\x00\x00\x00\x00\x00\x00\xc0\x10\x00\x00\x00\x00\x00\x00@\x10\x00\x00\x00\x00\x00\x00\xc0\x14\x00\x00\x00\x00\x00\x00@\x14\x00\x00\x00\x00\x00\x00\xc0\x18\x00\x00\x00\x00\x00\x00@\x18\x00\x00\x00\x00\x00\x00\x94t\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'c',
+				order: binary.BigEndian,
+				esize: 16,
+				align: 8,
+			},
+			shape:   []int{2, 3},
+			strides: []int{48, 16},
+			data:    []complex128{complex(-1, 1), complex(2, -2), complex(-3, 3), complex(-4, 4), complex(-5, 5), complex(-6, 6)},
+		},
+	},
+	{
+		// pickle.dumps(np.array([[-1],[-2,-3],[-4,-5,-6]], dtype="object"), protocol=4)
+		name: "ndarray-38",
+		code: `np.array([[-1],[-2,-3],[-4,-5,-6]], dtype="object")`,
+		pkl:  "\x80\x04\x95\xb2\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b\x89]\x94(]\x94J\xff\xff\xff\xffa]\x94(J\xfe\xff\xff\xffJ\xfd\xff\xff\xffe]\x94(J\xfc\xff\xff\xffJ\xfb\xff\xff\xffJ\xfa\xff\xff\xffeet\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'O',
+				order: nil,
+				esize: 8,
+				align: 8,
+				flags: 63,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    pylist(pylist(-1), pylist(-2, -3), pylist(-4, -5, -6)),
+		},
+	},
+	{
+		// pickle.dumps(np.array([[-1],["-2",-3],[-4,-5,"-6"]], dtype="object"), protocol=4)
+		name: "ndarray-39",
+		code: `np.array([[-1],["-2",-3],[-4,-5,"-6"]], dtype="object")`,
+		pkl:  "\x80\x04\x95\xb2\x00\x00\x00\x00\x00\x00\x00\x8c\x15numpy.core.multiarray\x94\x8c\f_reconstruct\x94\x93\x94\x8c\x05numpy\x94\x8c\andarray\x94\x93\x94K\x00\x85\x94C\x01b\x94\x87\x94R\x94(K\x01K\x03\x85\x94h\x03\x8c\x05dtype\x94\x93\x94\x8c\x02O8\x94\x89\x88\x87\x94R\x94(K\x03\x8c\x01|\x94NNNJ\xff\xff\xff\xffJ\xff\xff\xff\xffK?t\x94b\x89]\x94(]\x94J\xff\xff\xff\xffa]\x94(\x8c\x02-2\x94J\xfd\xff\xff\xffe]\x94(J\xfc\xff\xff\xffJ\xfb\xff\xff\xff\x8c\x02-6\x94eet\x94b.",
+		want: &Array{
+			descr: ArrayDescr{
+				kind:  'O',
+				order: nil,
+				esize: 8,
+				align: 8,
+				flags: 63,
+			},
+			shape:   []int{3},
+			strides: []int{8},
+			data:    pylist(pylist(-1), pylist("-2", -3), pylist(-4, -5, "-6")),
+		},
+	},
+}

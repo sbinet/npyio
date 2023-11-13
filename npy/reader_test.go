@@ -415,3 +415,22 @@ func TestStringLenDtype(t *testing.T) {
 		}
 	}
 }
+
+func TestRaggedArray(t *testing.T) {
+	want := pylist(pylist(1, 2, 3, 4), pylist(5, 6, 7), pylist(8, 9))
+	f, err := os.Open("../testdata/ragged-array.npy")
+	if err != nil {
+		t.Errorf("error: %v\n", err)
+	}
+	defer f.Close()
+
+	var arr Array
+	err = Read(f, &arr)
+	if err != nil {
+		t.Fatalf("error reading data: %v\n", err)
+	}
+
+	if got, want := arr.Data(), want; !reflect.DeepEqual(got, want) {
+		t.Fatalf("invalid ragged-array:\ngot= %v\nwant=%v", got, want)
+	}
+}

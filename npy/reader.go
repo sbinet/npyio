@@ -189,6 +189,50 @@ func (r *Reader) Read(ptr interface{}) error {
 	case *int, *uint, *[]int, *[]uint:
 		return ErrInvalidType
 
+	case *Array:
+		const flags = 0
+		descr, err := newDescrFrom(r.Header.Descr.Type, flags)
+		if err != nil {
+			return fmt.Errorf("could not create array description from %q: %w", r.Header.Descr.Type, err)
+		}
+
+		if descr.esize < 0 {
+			// FIXME(sbinet): shouldn't this be addressed in newDescrFrom ?
+			// check with c-numpy. (for dtype="|O")
+			descr.esize = dt.size
+		}
+
+		vptr.descr = *descr
+		vptr.fortran = r.Header.Descr.Fortran
+		vptr.shape = r.Header.Descr.Shape
+
+		err = vptr.setupStrides()
+		if err != nil {
+			return fmt.Errorf("could not setup array strides for %q: %w", r.Header.Descr.Type, err)
+		}
+
+		raw, err := io.ReadAll(r.r)
+		if err != nil {
+			return fmt.Errorf("could not consume all data: %w", err)
+		}
+
+		data, err := vptr.descr.unmarshal(raw, r.Header.Descr.Shape)
+		if err != nil {
+			return fmt.Errorf("could not unmarshal array data: %w", err)
+		}
+
+		if vptr.descr.kind == 'O' {
+			// data (for dtype("object")) is stored as a numpy.array inside a pickle.
+			// remove the extra numpy.array indirection.
+			if arr, ok := data.(*Array); ok {
+				*vptr = *arr
+				data = arr.data
+			}
+		}
+
+		vptr.data = data
+		return nil
+
 	case *mat.Dense:
 		var data []float64
 		err := r.Read(&data)

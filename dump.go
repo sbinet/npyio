@@ -75,7 +75,7 @@ func Dump(o io.Writer, r io.ReaderAt) error {
 	case bytes.Equal(npy.Magic[:], hdr[:]):
 		err = display(o, io.NewSectionReader(r, 0, sz), fname)
 		if err != nil {
-			return fmt.Errorf("npyio: could not display ile: %w", err)
+			return fmt.Errorf("npyio: could not display file: %w", err)
 		}
 
 	case bytes.Equal(zipMagic[:], hdr[:len(zipMagic)]):

@@ -25,7 +25,7 @@ jobs:
     runs-on: ${{ matrix.platform }}
     steps:
     - name: Install Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go-version }}
  
@@ -80,11 +80,11 @@ jobs:
       run: |
         go run ./ci/run-tests.go $TAGS
     - name: static-check
-      uses: dominikh/staticcheck-action@v1.2.0
+      uses: dominikh/staticcheck-action@v1
       with:
         install-go: false
         cache-key: ${{ matrix.platform }}
-        version: "2022.1"
+        version: "2023.1.5"
     - name: Upload-Coverage
       if: matrix.platform == 'ubuntu-latest'
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3

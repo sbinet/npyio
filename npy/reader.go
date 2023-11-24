@@ -7,6 +7,7 @@ package npy
 import (
 	"bytes"
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -236,12 +237,12 @@ func (r *Reader) Read(ptr interface{}) error {
 	case *mat.Dense:
 		var data []float64
 		err := r.Read(&data)
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
 		nrows, ncols, err := dimsFromShape(r.Header.Descr.Shape)
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -265,7 +266,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [1]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -289,7 +290,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [1]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -308,7 +309,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [1]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -327,7 +328,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [1]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -341,7 +342,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [2]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -360,7 +361,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [2]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -374,7 +375,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -393,7 +394,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [4]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -407,7 +408,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -426,7 +427,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [8]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -440,7 +441,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [1]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -459,7 +460,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -473,7 +474,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [2]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -492,7 +493,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [2]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -506,7 +507,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -525,7 +526,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [4]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -539,7 +540,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -558,7 +559,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [8]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -572,7 +573,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [4]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -591,7 +592,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [4]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -605,7 +606,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -624,7 +625,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [8]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -638,7 +639,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [8]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -659,7 +660,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [8]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -675,7 +676,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		}
 		var buf [16]byte
 		_, err := r.read(buf[:])
-		if err != nil && err != io.EOF {
+		if err != nil && !errors.Is(err, io.EOF) {
 			r.err = err
 			return r.err
 		}
@@ -696,7 +697,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		var buf [16]byte
 		for i := 0; i < n; i++ {
 			_, err := r.read(buf[:])
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -751,7 +752,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		slice := rv
 		for i := 0; i < nelems; i++ {
 			err := r.Read(v.Addr().Interface())
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}
@@ -769,7 +770,7 @@ func (r *Reader) Read(ptr interface{}) error {
 		v := reflect.New(dt.rt).Elem()
 		for i := 0; i < nelems; i++ {
 			err := r.Read(v.Addr().Interface())
-			if err != nil && err != io.EOF {
+			if err != nil && !errors.Is(err, io.EOF) {
 				r.err = err
 				return r.err
 			}

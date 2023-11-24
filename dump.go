@@ -6,6 +6,7 @@ package npyio
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -129,7 +130,7 @@ func display(o io.Writer, f io.Reader, fname string) error {
 
 	var arr npy.Array
 	err = r.Read(&arr)
-	if err != nil && err != io.EOF {
+	if err != nil && !errors.Is(err, io.EOF) {
 		return fmt.Errorf("npyio: read error: %w", err)
 	}
 	fmt.Fprintf(o, "data = %v\n", arr.Data())

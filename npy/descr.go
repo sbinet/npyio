@@ -352,25 +352,22 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 			return data, nil
 
 		case 2:
-			const sz = 2
-			data := make([]int16, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]int16, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, int16(dt.order.Uint16(raw[i:])))
 			}
 			return data, nil
 
 		case 4:
-			const sz = 4
-			data := make([]int32, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]int32, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, int32(dt.order.Uint32(raw[i:])))
 			}
 			return data, nil
 
 		case 8:
-			const sz = 8
-			data := make([]int64, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]int64, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, int64(dt.order.Uint64(raw[i:])))
 			}
 			return data, nil
@@ -387,25 +384,22 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 			return data, nil
 
 		case 2:
-			const sz = 2
-			data := make([]uint16, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]uint16, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, dt.order.Uint16(raw[i:]))
 			}
 			return data, nil
 
 		case 4:
-			const sz = 4
-			data := make([]uint32, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]uint32, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, dt.order.Uint32(raw[i:]))
 			}
 			return data, nil
 
 		case 8:
-			const sz = 8
-			data := make([]uint64, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]uint64, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, dt.order.Uint64(raw[i:]))
 			}
 			return data, nil
@@ -417,25 +411,22 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 	case 'f':
 		switch dt.esize {
 		case 2:
-			const sz = 2
-			data := make([]float16.Num, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]float16.Num, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, float16.Float16Frombits(dt.order.Uint16(raw[i:])))
 			}
 			return data, nil
 
 		case 4:
-			const sz = 4
-			data := make([]float32, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]float32, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, math.Float32frombits(dt.order.Uint32(raw[i:])))
 			}
 			return data, nil
 
 		case 8:
-			const sz = 8
-			data := make([]float64, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]float64, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, math.Float64frombits(dt.order.Uint64(raw[i:])))
 			}
 			return data, nil
@@ -447,9 +438,8 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 	case 'c':
 		switch dt.esize {
 		case 8:
-			const sz = 8
-			data := make([]complex64, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]complex64, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, complex(
 					math.Float32frombits(dt.order.Uint32(raw[i+0:])),
 					math.Float32frombits(dt.order.Uint32(raw[i+4:])),
@@ -458,9 +448,8 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 			return data, nil
 
 		case 16:
-			const sz = 16
-			data := make([]complex128, 0, len(raw)/sz)
-			for i := 0; i < len(raw); i += sz {
+			data := make([]complex128, 0, len(raw)/dt.esize)
+			for i := 0; i < len(raw); i += dt.esize {
 				data = append(data, complex(
 					math.Float64frombits(dt.order.Uint64(raw[i+0:])),
 					math.Float64frombits(dt.order.Uint64(raw[i+8:])),

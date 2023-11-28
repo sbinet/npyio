@@ -37,6 +37,8 @@ package npy
 
 import (
 	"encoding/binary"
+
+	"github.com/sbinet/npyio/npy/float16"
 )
 
 `)
@@ -68,6 +70,11 @@ import (
 		`np.dtype("uint16")`,
 		`np.dtype("uint32")`,
 		`np.dtype("uint64")`,
+		`np.dtype("float16")`,
+		`np.dtype("float32")`,
+		`np.dtype("float64")`,
+		`np.dtype(">f2")`,
+		`np.dtype("<f2")`,
 		`np.dtype(">f4")`,
 		`np.dtype("<f4")`,
 		`np.dtype(">f8")`,
@@ -124,6 +131,8 @@ import (
 		{`np.array([1,2,3], dtype="<u8")`, `[]uint64{1,2,3}`},
 		{`np.array([1,2,3], dtype=">u8")`, `[]uint64{1,2,3}`},
 		// floats
+		{`np.array([-1,+2,-3], dtype="<f2")`, `[]float16.Num{float16.New(-1),float16.New(+2),float16.New(-3)}`},
+		{`np.array([-1,+2,-3], dtype=">f2")`, `[]float16.Num{float16.New(-1),float16.New(+2),float16.New(-3)}`},
 		{`np.array([-1,+2,-3], dtype="<f4")`, `[]float32{-1,+2,-3}`},
 		{`np.array([-1,+2,-3], dtype=">f4")`, `[]float32{-1,+2,-3}`},
 		{`np.array([-1,+2,-3], dtype="<f8")`, `[]float64{-1,+2,-3}`},

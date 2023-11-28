@@ -15,6 +15,7 @@ import (
 	"unicode/utf8"
 
 	py "github.com/nlpodyssey/gopickle/types"
+	"github.com/sbinet/npyio/npy/float16"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/unicode/utf32"
 )
@@ -415,6 +416,14 @@ func (dt ArrayDescr) unmarshal(raw []byte, shape []int) (any, error) {
 
 	case 'f':
 		switch dt.esize {
+		case 2:
+			const sz = 2
+			data := make([]float16.Num, 0, len(raw)/sz)
+			for i := 0; i < len(raw); i += sz {
+				data = append(data, float16.Float16Frombits(dt.order.Uint16(raw[i:])))
+			}
+			return data, nil
+
 		case 4:
 			const sz = 4
 			data := make([]float32, 0, len(raw)/sz)

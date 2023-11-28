@@ -107,6 +107,13 @@ import (
 		// UTF
 		`np.dtype("<U10")`,
 		`np.dtype(">U10")`,
+		// time
+		`np.dtype("timedelta64")`,
+		`np.dtype("<m8")`,
+		`np.dtype(">m8")`,
+		`np.dtype("datetime64")`,
+		`np.dtype("<M8")`,
+		`np.dtype(">M8")`,
 	})
 	ndarray(src, []Code{
 		// bool

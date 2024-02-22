@@ -1,6 +1,6 @@
 module github.com/sbinet/npyio
 
-go 1.20
+go 1.21
 
 require (
 	github.com/campoy/embedmd v1.0.0
